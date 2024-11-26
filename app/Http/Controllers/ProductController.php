@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 //import model product
 
 use Surfsidemedia\Shoppingcart\Facades\Cart;
-use App\Models\Product; 
+use App\Models\Product;
 
 //import return type View
 use Illuminate\View\View;
@@ -26,14 +26,17 @@ class ProductController extends Controller
      *
      * @return void
      */
-    public function index() : View
+    public function index(): View
     {
         //get all products
         $products = Product::latest()->paginate(10);
-        $best = product::where('qty_out','>=',5)->get();
+        $best = product::where('qty_out', '>=', 5)->get();
         //render view with products
-        return view('admin.page.product',['title'=>'halaman Products','name'=>'Produk'], 
-        compact('products','best'));
+        return view(
+            'admin.page.product',
+            ['title' => 'halaman Products', 'name' => 'Produk'],
+            compact('products', 'best')
+        );
     }
 
     /**
@@ -43,7 +46,7 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        return view('admin.page.products.create',['title'=>'halaman Products','name'=>'create']);
+        return view('admin.page.products.create', ['title' => 'halaman Products', 'name' => 'create']);
     }
 
     /**
@@ -69,7 +72,7 @@ class ProductController extends Controller
 
         //create product
         Product::create([
-            'image'         => $image->hashName(),   
+            'image'         => $image->hashName(),
             'title'         => $request->title,
             'description'   => $request->description,
             'price'         => $request->price,
@@ -79,7 +82,7 @@ class ProductController extends Controller
         //redirect to index
         return redirect()->route('product.index')->with(['success' => 'Data Berhasil Disimpan!']);
     }
-    
+
     /**
      * show
      *
@@ -89,13 +92,13 @@ class ProductController extends Controller
     public function show(string $id): View
     {
         //get product by ID
-        
+
         $product = Product::findOrFail($id);
 
         //render view with product
-        return view('admin.page.products.show',['title'=>'halaman Show','name'=>'Show'], compact('product'));
+        return view('admin.page.products.show', ['title' => 'halaman Show', 'name' => 'Show'], compact('product'));
     }
-    
+
     /**
      * edit
      *
@@ -108,9 +111,9 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         //render view with product
-        return view('admin.page.products.edit',['title'=>'halaman edit','name'=>'edit'], compact('product'));
+        return view('admin.page.products.edit', ['title' => 'halaman edit', 'name' => 'edit'], compact('product'));
     }
-        
+
     /**
      * update
      *
@@ -140,7 +143,7 @@ class ProductController extends Controller
             $image->storeAs('public/products', $image->hashName());
 
             //delete old image
-            Storage::delete('public/products/'.$product->image);
+            Storage::delete('public/products/' . $product->image);
 
             //update product with new image
             $product->update([
@@ -150,7 +153,6 @@ class ProductController extends Controller
                 'price'         => $request->price,
                 'stok'         => $request->stok
             ]);
-
         } else {
 
             //update product without image
@@ -165,7 +167,7 @@ class ProductController extends Controller
         //redirect to index
         return redirect()->route('product.index')->with(['success' => 'Data Berhasil Diubah!']);
     }
-    
+
     /**
      * destroy
      *
@@ -178,7 +180,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         //delete image
-        Storage::delete('public/products/'. $product->image);
+        Storage::delete('public/products/' . $product->image);
 
         //delete product
         $product->delete();
@@ -186,6 +188,16 @@ class ProductController extends Controller
         //redirect to index
         return redirect()->route('product.index')->with(['success' => 'Data Berhasil Dihapus!']);
     }
-    
-    
+    public function addStock(Request $request, Product $product)
+    {
+        $request->validate([
+            'additional_stock' => 'required|integer|min:1'
+        ]);
+
+        // Menambah stok produk
+        $product->stok += $request->additional_stock;
+        $product->save();
+
+        return redirect()->route('product.index')->with('success', 'Stok produk berhasil ditambah.');
+    }
 }

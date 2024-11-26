@@ -4,23 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
 {
-    public function index() 
+    public function index()
     {
         $data = Product::latest()->paginate(10);
-        $best = product::where('qty_out', '>=', 5)->get();
+        $best = product::where('qty_out', '>=', 25)->get();
         $countKeranjang = Auth::check() ? Auth::user()->carts->count() : 0;
-        
+
         return view('user.index', [
             'title' => 'home',
             'data' => $data,
             'best' => $best,
-            'count'=> $countKeranjang
+            'count' => $countKeranjang
         ]);
     }
     public function detailProduk(string $id)
@@ -29,18 +30,19 @@ class UserController extends Controller
         $title = 'Detail Produk';
         $count = Auth::check() ? Auth::user()->carts->count() : 0;
         $isInCart = Cart::where('user_id', Auth::id())
-                                                        ->where('product_id', $product->id)
-                                                        ->exists();
+            ->where('product_id', $product->id)
+            ->exists();
 
         // Pass product data to the view
-        return view('user.detailproduk', compact('product','title','isInCart','count'));
+        return view('user.detailproduk', compact('product', 'title', 'isInCart', 'count'));
     }
     public function addTocart(Request $request)
     {
         // Validasi input
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id', // Pastikan product_id valid
-            'quantity' => 'required|integer|min:1', // Pastikan quantity adalah integer >= 1
+            'quantity' => 'required|numeric|min:0.001', // Minimal 0.001 kg
+            'unit' => 'required|in:kg,gram', // Validasi unit harus 'kg' atau 'gram'
         ]);
 
         $userId = Auth::id(); // Ambil ID pengguna yang sedang login
@@ -51,6 +53,17 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Produk tidak ditemukan.');
         }
 
+        // Konversi quantity ke kilogram jika unit adalah gram
+        $quantity = $validated['quantity'];
+        if ($validated['unit'] === 'gram') {
+            $quantity = $quantity / 1000; // Konversi gram ke kg
+        }
+
+        // Validasi stok
+        if ($quantity > $product->stok) {
+            return redirect()->back()->with('error', 'Jumlah yang dimasukkan melebihi stok produk.');
+        }
+
         // Tambahkan atau perbarui data di tabel cart
         $cart = Cart::updateOrCreate(
             [
@@ -58,8 +71,8 @@ class UserController extends Controller
                 'product_id' => $validated['product_id'],
             ],
             [
-                'quantity' => $validated['quantity'],
-                'price' => $product->price, // Harga diambil dari tabel products
+                'quantity' => $quantity,
+                'price' => $product->price * $quantity, // Hitung harga berdasarkan quantity
             ]
         );
 
@@ -70,7 +83,6 @@ class UserController extends Controller
 
         return redirect()->back()->with('error', 'Gagal menambahkan produk ke keranjang.');
     }
-
 
     public function shop()
     {
@@ -84,52 +96,61 @@ class UserController extends Controller
         ]);
     }
 
-    public function checkOut() 
-    {
-        if (!Auth::check()) {
-            redirect()->route('login');
-        }    
-    }
     public function showCart()
-{
-    $count = Auth::check() ? Auth::user()->carts->count() : 0;
-    // Ambil produk dalam keranjang berdasarkan pengguna yang sedang login
-    $carts = Cart::where('user_id', Auth::id())->get();
-    $title = 'Keranjang';
-    return view('user.cart', compact('carts','title','count'));
-}
+    {
+        $title = 'Keranjang';
+        $count = Auth::check() ? Auth::user()->carts->count() : 0;
+        // Ambil produk dalam keranjang berdasarkan pengguna yang sedang login
+        $carts = Cart::where('user_id', Auth::id())->get();
+        // $stok = $carts->product->stok;
 
-public function updateCart(Request $request)
-{
-    // Validasi data yang dikirim
-    $validated = $request->validate([
-        'quantity' => 'array|required',
-        'quantity.*' => 'numeric|min:0.1', // Pastikan kuantitas berupa angka dengan desimal
-        'cart_items' => 'array', // Pilihan produk yang dicentang
-    ]);
 
-    // Update kuantitas produk dalam keranjang
-    foreach ($validated['quantity'] as $cartId => $quantity) {
+        return view('user.cart', compact('carts', 'title', 'count'));
+    }
+
+    public function updateCart(Request $request)
+    {
+        // Validasi data yang dikirim
+        $validated = $request->validate([
+            'quantity' => 'array|required',
+            'quantity.*' => 'numeric|min:0.1', // Pastikan kuantitas berupa angka dengan desimal
+            'cart_items' => 'array', // Pilihan produk yang dicentang
+        ]);
+
+        // Update kuantitas produk dalam keranjang
+        foreach ($validated['quantity'] as $cartId => $quantity) {
+            $cart = Cart::find($cartId);
+            if ($cart) {
+                $cart->quantity = $quantity;
+                $cart->save();
+            }
+        }
+
+        // Redirect ke halaman keranjang dengan pesan sukses
+        return redirect()->route('cart')->with('success', 'Keranjang berhasil diperbarui.');
+    }
+
+    public function removeFromCart($cartId)
+    {
+        // Hapus produk dari keranjang
         $cart = Cart::find($cartId);
         if ($cart) {
-            $cart->quantity = $quantity;
-            $cart->save();
+            $cart->delete();
         }
+
+        return redirect()->route('cart')->with('success', 'Produk berhasil dihapus dari keranjang.');
     }
+    public function riwayat()
+    {
+        $title = 'Riwayat Pesanan';
+        $count = Auth::check() ? Auth::user()->carts->count() : 0;
+        // Ambil transaksi milik user yang sedang login
+        $transactions = Transaction::where('user_id', Auth::id())
+            ->with(['transactionDetails.product', 'address'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    // Redirect ke halaman keranjang dengan pesan sukses
-    return redirect()->route('cart')->with('success', 'Keranjang berhasil diperbarui.');
-}
-
-public function removeFromCart($cartId)
-{
-    // Hapus produk dari keranjang
-    $cart = Cart::find($cartId);
-    if ($cart) {
-        $cart->delete();
+        // Tampilkan halaman riwayat transaksi
+        return view('user.riwayat', compact('transactions', 'title', 'count'));
     }
-
-    return redirect()->route('cart')->with('success', 'Produk berhasil dihapus dari keranjang.');
-}
-
 }
