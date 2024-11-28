@@ -41,8 +41,8 @@
             </a>
         </li>
     
-        <li class="nav-item active {{ Request::path() === 'admin/dataPenjualan' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link" href="dataPenjualan">
+        <li class="nav-item active {{ Request::path() === 'admin/DataPenjualan' ? 'badge text-bg-info' : '' }}">
+            <a class="nav-link" href="{{ route('admin.datapenjualan') }}">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Data Penjualan</span></a>
         </li>

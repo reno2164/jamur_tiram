@@ -139,12 +139,14 @@
                     </li>
                 </ul>
             </div>
-
-            <div class="payment-action">
-                <button id="pay-button" class="btn-pay">
-                    <i class="fas fa-credit-card"></i> Bayar Sekarang
-                </button>
-            </div>
+            <form action="api/midtrans/notification" method="POST">
+                @csrf
+                <div class="payment-action">
+                    <button id="pay-button" type="button" class="btn-pay">
+                        <i class="fas fa-credit-card"></i> Bayar Sekarang
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -152,7 +154,8 @@
     </script>
     <script type="text/javascript">
         const payButton = document.getElementById('pay-button');
-        payButton.addEventListener('click', function() {
+        payButton.addEventListener('click', function(event) {
+            event.preventDefault(); 
             console.log('Snap Token: {{ $snapToken }}');
             snap.pay('{{ $snapToken }}', {
                 onSuccess: function(result) {
@@ -161,7 +164,7 @@
                 },
                 onPending: function(result) {
                     alert("Menunggu pembayaran.");
-                    console.log(result);
+                    window.location.href = "{{ url()->previous() }}";
                 },
                 onError: function(result) {
                     alert("Pembayaran gagal!");

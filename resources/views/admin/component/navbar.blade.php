@@ -19,7 +19,7 @@
     <li class="nav-item dropdown no-arrow">
         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin@gmai.com <br>Admin</span>
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->email }}<br>{{ Auth::user()->username }}</span>
             <img class="img-profile rounded-circle"
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s">
         </a>

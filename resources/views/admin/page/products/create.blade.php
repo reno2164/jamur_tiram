@@ -63,8 +63,8 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label class="font-weight-bold">Stok</label>
-                                    <input type="number" class="form-control @error('stok') is-invalid @enderror" name="stok" value="{{ old('stok') }}" placeholder="Masukkan Stok Product">
-                                
+                                    <input type="number" step="0.01" class="form-control @error('stok') is-invalid @enderror" name="stok" value="{{ old('stok') }}" placeholder="Masukkan Stok Product">
+                            
                                     <!-- error message untuk stok -->
                                     @error('stok')
                                         <div class="alert alert-danger mt-2">
@@ -72,7 +72,7 @@
                                         </div>
                                     @enderror
                                 </div>
-                            </div>
+                            </div>                            
                         </div>
 
                         <button type="submit" class="btn btn-md btn-primary me-3">Simpan</button>
