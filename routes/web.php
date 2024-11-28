@@ -11,6 +11,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\pegawai\PegawaiController;
+use App\Http\Controllers\hashController;
+use App\Http\Controllers\SAWController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -45,3 +47,12 @@ Route::middleware(['auth',AuthAdmin::class])->group(function(){
 Route::middleware(['auth',AuthPegawai::class])->group(function(){
     Route::get('/pegawai',[PegawaiController::class,'index'])->name('pegawai.index');
 });
+
+Route::get('/hash', function () {
+    $password = "123";
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    return "Password asli: " . $password . "<br>Password hash: " . $hashedPassword;
+});
+
+
+Route::get('/saw', [SAWController::class, 'index']);
