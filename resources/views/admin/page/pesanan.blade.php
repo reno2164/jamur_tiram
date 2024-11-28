@@ -32,7 +32,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>No</th>
                                 <th>Kode Transaksi</th>
                                 <th>User</th>
                                 <th>Total Harga</th>

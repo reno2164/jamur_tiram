@@ -89,7 +89,7 @@ class AdminController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        $completedOrders = $query->with('user')->get();
+        $completedOrders = $query->with('user','transactionDetails.product')->get();
 
         $pdf = Pdf::loadView('admin.page.downloadPDF', compact('completedOrders'))
             ->setPaper('a4', 'landscape');
