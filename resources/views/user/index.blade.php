@@ -1,7 +1,84 @@
 @extends('layouts.user')
 
 @section('content')
+<style>
+    /* Styling for product cards */
+    .product-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #ffffff;
+    }
 
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Discount Badge */
+    .badge-discount {
+        background-color: #ff5e57;
+        color: white;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+
+    /* Image Styling */
+    .product-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+    }
+
+    /* Product Info */
+    .product-info {
+        padding: 15px;
+    }
+
+    .product-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .product-price {
+        font-size: 18px;
+        font-weight: bold;
+        color: #e53935;
+        margin-bottom: 5px;
+    }
+
+    .product-original-price {
+        font-size: 14px;
+        color: #9e9e9e;
+        text-decoration: line-through;
+    }
+
+    .product-location {
+        font-size: 12px;
+        color: #757575;
+        margin-top: 10px;
+    }
+
+    .product-rating {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: #fbc02d;
+    }
+
+    .product-rating span {
+        margin-left: 5px;
+        color: #333;
+    }
+</style>
     <!-- Bagian Slideshow Gambar Hero -->
     <div id="heroCarousel" class="carousel slide mt-2" data-bs-ride="carousel">
         <div class="carousel-inner">
@@ -48,43 +125,37 @@
     @else
         <h4 class="mt-5">Best Seller</h4>
         <div class="content mt-3 d-flex flex-lg-wrap gap-5 mb-5">
-            @foreach ($best as $b)
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card product-card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
-                        <!-- Image Section -->
-                        <div class="card-header p-0 position-relative">
-                            <img src="{{ asset('storage/products/' . $b->image) }}" alt="{{ $b->title }}"
-                                class="img-fluid" style="height:200px; object-fit: cover;">
-                        </div>
+            @foreach ($best as $p)
+                <div class="col-md-3 mb-4">
+                    <div class="product-card position-relative">
+                        <a href="{{ route('product.detail', $p->id) }}" class="text-decoration-none text-dark">
+                            <!-- Discount Badge -->
+                            @if ($p->discount > 0)
+                                <div class="badge-discount">-{{ $p->discount }}%</div>
+                            @endif
 
-                        <!-- Body Section -->
-                        <div class="card-body text-center p-3">
-                            <h5 class="fw-bold">{{ $b->title }}</h5>
-                            <p class="text-muted m-0" style="font-size: 14px;">
-                                <i class="fa-regular fa-star"></i> 5+ Reviews
-                            </p>
-                            <p class="text-primary m-0" style="font-size: 16px;">
-                                <span>Rp {{ number_format($b->price) }}</span>
-                            </p>
+                            <!-- Product Image -->
+                            <img src="{{ asset('storage/products/' . $p->image) }}" alt="{{ $p->title }}">
 
-                            <!-- Stock Section -->
-                            <p class="text-success m-0" style="font-size: 14px;">
-                                Stok Tersedia: {{ $b->stok }}
-                            </p>
-                        </div>
-
-                        <!-- Footer Section (Button) -->
-                        <div class="card-footer bg-white text-center p-3 border-0">
-                            <form action="{{ route('addTocart') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="id" value="{{ $b->id }}">
-                                <input type="hidden" name="title" value="{{ $b->title }}">
-                                <input type="hidden" name="price" value="{{ $b->price }}">
-                                <button type="submit" class="btn btn-primary w-100" style="font-size:16px;">
-                                    <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
-                                </button>
-                            </form>
-                        </div>
+                            <!-- Product Info -->
+                            <div class="product-info">
+                                <div class="product-title">{{ $p->title }}</div>
+                                <div class="product-price">Rp
+                                    {{ number_format($p->price - ($p->price * $p->discount) / 100) }}</div>
+                                @if ($p->discount > 0)
+                                    <div class="product-original-price">Rp {{ number_format($p->price) }}</div>
+                                @endif
+                                <p class="text-success">Tersedia : {{ $p->stok }} Kg</p>
+                                <!-- Ratings and Sales -->
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div class="product-rating">
+                                        <i class="fas fa-star"></i>
+                                        <span>4.7</span> <!-- Example rating -->
+                                    </div>
+                                    <div>{{ $p->qty_out }} Kg Terjual</div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             @endforeach
@@ -97,44 +168,39 @@
             <h1>Belum ada produk ...!</h1>
         @else
             @foreach ($data as $p)
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card product-card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
-                        <!-- Image Section -->
-                        <div class="card-header p-0 position-relative">
-                            <img src="{{ asset('storage/products/' . $p->image) }}" alt="{{ $p->title }}"
-                                class="img-fluid" style="height:200px; object-fit: cover;">
-                        </div>
+                <div class="col-md-3 mb-4">
+                    <div class="product-card position-relative">
+                        <a href="{{ route('product.detail', $p->id) }}" class="text-decoration-none text-dark">
+                            <!-- Discount Badge -->
+                            @if ($p->discount > 0)
+                                <div class="badge-discount">-{{ $p->discount }}%</div>
+                            @endif
 
-                        <!-- Body Section -->
-                        <div class="card-body text-center p-3">
-                            <h5 class="fw-bold">{{ $p->title }}</h5>
-                            <p class="text-muted m-0" style="font-size: 14px;">
-                                <i class="fa-regular fa-star"></i> 5+ Reviews
-                            </p>
-                            <p class="text-primary m-0" style="font-size: 16px;">
-                                <span>Rp {{ number_format($p->price) }}</span>
-                            </p>
+                            <!-- Product Image -->
+                            <img src="{{ asset('storage/products/' . $p->image) }}" alt="{{ $p->title }}">
 
-                            <!-- Stock Section -->
-                            <p class="text-success m-0" style="font-size: 14px;">
-                                Stok Tersedia: {{ $p->stok }}
-                            </p>
-                        </div>
-
-                        <!-- Footer Section (Button) -->
-                        <div class="card-footer bg-white text-center p-3 border-0">
-                            <form action="{{ route('addTocart') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="idProduct" value="{{ $p->id }}">
-                                <button type="submit" class="btn btn-primary w-100" style="font-size:16px;">
-                                    <i class="fa-solid fa-cart-plus"></i> Tambah ke Keranjang
-                                </button>
-                            </form>
-                        </div>
+                            <!-- Product Info -->
+                            <div class="product-info">
+                                <div class="product-title">{{ $p->title }}</div>
+                                <div class="product-price">Rp
+                                    {{ number_format($p->price - ($p->price * $p->discount) / 100) }}</div>
+                                @if ($p->discount > 0)
+                                    <div class="product-original-price">Rp {{ number_format($p->price) }}</div>
+                                @endif
+                                <p class="text-success">Tersedia : {{ $p->stok }} Kg</p>
+                                <!-- Ratings and Sales -->
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <div class="product-rating">
+                                        <i class="fas fa-star"></i>
+                                        <span>4.7</span> <!-- Example rating -->
+                                    </div>
+                                    <div>{{ $p->qty_out }} Kg Terjual</div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             @endforeach
-
     </div>
     <div class="pagination d-flex flex-row justify-content-between">
         <div class="showData">

@@ -26,26 +26,18 @@
             </a>
         </li>
     
-    
-        <li class="nav-item active {{ Request::path() === 'admin/pegawai' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link collapsed" href="{{--route('pegawai.index')--}}">
-                <i class="fas fa-fw fa-solid fa-user"></i>
-                <span>Pegawai</span>
-            </a>
-        </li>
-    
-        <li class="nav-item active {{ Request::path() === 'admin/pelanggan' ? 'badge text-bg-info' : ''}}">
-    
-            <a class="nav-link collapsed" href="{{--route('pelanggan.index')--}}" >
+        <li class="nav-item active {{ Request::path() === 'admin/users' ? 'badge text-bg-info' : ''}}">
+            <a class="nav-link collapsed" href="{{ route('manage.users') }}">
                 <i class="fas fa-fw fa-solid fa-users"></i>
-                <span>Pelanggan</span>
+                <span>User Management</span>
             </a>
         </li>
+        
     
-        <li class="nav-item active">
-            <a class="nav-link collapsed" href="datapesanan" >
+        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : ''}}">
+            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}" >
                 <i class="fas fa-fw fa-solid fa-file-invoice-dollar"></i>
-                <span>Transaksi</span>
+                <span>Pesanan</span>
             </a>
         </li>
     

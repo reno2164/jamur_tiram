@@ -17,6 +17,7 @@
                 <label for="street" class="form-label">Alamat Lengkap</label>
                 <input type="text" name="street" id="street" class="form-control" required>
             </div>
+            <button type="button" class="btn btn-danger">Batal</button>
             <button type="submit" class="btn btn-success">Simpan</button>
         </form>
     </div>
