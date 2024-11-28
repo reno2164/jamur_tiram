@@ -26,26 +26,17 @@
             </a>
         </li>
     
-    
-        <li class="nav-item active {{ Request::path() === 'admin/pegawai' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link collapsed" href="{{--route('pegawai.index')--}}">
-                <i class="fas fa-fw fa-solid fa-user"></i>
-                <span>Pegawai</span>
-            </a>
-        </li>
-    
         <li class="nav-item active {{ Request::path() === 'admin/pelanggan' ? 'badge text-bg-info' : ''}}">
-    
             <a class="nav-link collapsed" href="{{--route('pelanggan.index')--}}" >
                 <i class="fas fa-fw fa-solid fa-users"></i>
                 <span>Pelanggan</span>
             </a>
         </li>
     
-        <li class="nav-item active">
-            <a class="nav-link collapsed" href="datapesanan" >
+        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : ''}}">
+            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}" >
                 <i class="fas fa-fw fa-solid fa-file-invoice-dollar"></i>
-                <span>Transaksi</span>
+                <span>Pesanan</span>
             </a>
         </li>
     
@@ -53,6 +44,14 @@
             <a class="nav-link" href="dataPenjualan">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Data Penjualan</span></a>
+        </li>
+
+        <!-- Tambahkan Menu SAW -->
+        <li class="nav-item active {{ Request::path() === 'admin/saw' ? 'badge text-bg-info' : '' }}">
+            <a class="nav-link collapsed" href="{{ route('admin.saw') }}">
+                <i class="fas fa-fw fa-chart-bar"></i>
+                <span>SAW</span>
+            </a>
         </li>
     
         <li class="nav-item active">

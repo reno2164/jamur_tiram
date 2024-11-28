@@ -1,4 +1,96 @@
-
+<style>
+    /* Container utama */
+    .select {
+        position: relative;
+        cursor: pointer;
+    }
+    
+    /* Profil User */
+    .profile-img {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+    }
+    
+    .profile-info {
+        color: #ffffff;
+    }
+    
+    .username {
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .email {
+        font-size: 12px;
+        color: #e0e0e0;
+    }
+    
+    /* Dropdown menu */
+    #links-login {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background-color: #2c2c2c;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        padding: 10px;
+        width: 200px;
+        display: none;
+        z-index: 10;
+    }
+    
+    .select:hover #links-login {
+        display: block;
+    }
+    
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        color: #fff;
+        text-decoration: none;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #494949;
+        border-radius: 5px;
+    }
+    
+    .dropdown-item i {
+        color: #6c63ff;
+        font-size: 16px;
+    }
+    
+    /* Tombol Logout */
+    .btn-logout {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        border: none;
+        background: #e53935;
+        color: #fff;
+        padding: 10px;
+        font-size: 14px;
+        text-align: left;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-logout:hover {
+        background-color: #c62828;
+    }
+    
+    .btn-logout i {
+        color: #fff;
+        font-size: 16px;
+    }
+    </style>
 <nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #49443a">
     <div class="container">
         <a class="navbar-brand fs-6" href="/">Jamur Tiram <br>Putra Pandawa</a>
@@ -21,7 +113,7 @@
                 </li>
                 <li class="nav-item my-auto">
                     <div class="notif">
-                        <a href="#" class="fs-5 nav-link {{ Request::path() == 'checkOut' ? 'active' : '' }}">
+                        <a href="{{ route('riwayat') }}" class="fs-5 nav-link {{ Request::path() == 'riwayat-pembelian' ? 'active' : '' }}">
                             <i class="fa-regular fa-bell"></i>
                         </a>
                     </div>
@@ -37,23 +129,32 @@
                     </div>
                 </li>
                 @auth
-                    
                     <div class="select" tabindex="0" role="button">
                         <div class="text-links">
                             <div class="d-flex gap-2 align-items-center">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s" class="rounded-circle"
-                                    style="width: 40px;" alt="">
-                                <div class="d-flex flex-column text-white">
-                                    <p class="m-0" style="font-weight: 700; font-size:14px;">{{ Auth::user()->username }}
-                                    </p>
-                                    <p class="m-0" style="font-size:12px">{{ Auth::user()->email }}</p>
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s" 
+                                    class="rounded-circle profile-img" alt="Profile Image">
+                                <div class="d-flex flex-column profile-info">
+                                    <p class="m-0 username">{{ Auth::user()->username }}</p>
+                                    <p class="m-0 email">{{ Auth::user()->email }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="links-login text-white" id="links-login">
-                            <form action="{{ route('logout') }}" method="POST">
+                        <div class="links-login" id="links-login">
+                            @if (Auth::user()->role == 'ADM')
+                                <a href="{{ route('admin.index') }}" class="dropdown-item">
+                                    <i class="fa-solid fa-chart-line"></i> Dashboard Admin
+                                </a>
+                            @elseif (Auth::user()->role == 'PGW')
+                                <a href="{{ route('pegawai.index') }}" class="dropdown-item">
+                                    <i class="fa-solid fa-clipboard-list"></i> Dashboard Pegawai
+                                </a>
+                            @endif
+                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
                                 @csrf
-                                <button type="submit" style="text-decoration: none" class="" role="button" tabindex="0">Keluar</button>
+                                <button type="submit" class="btn-logout">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                                </button>
                             </form>
                         </div>
                     </div>

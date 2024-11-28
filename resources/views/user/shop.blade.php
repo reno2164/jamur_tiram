@@ -106,7 +106,7 @@
                                 @if ($p->discount > 0)
                                     <div class="product-original-price">Rp {{ number_format($p->price) }}</div>
                                 @endif
-
+                                <p class="text-success">Tersedia : {{ $p->stok }} Kg</p>
                                 <!-- Ratings and Sales -->
                                 <div class="d-flex justify-content-between align-items-center mt-2">
                                     <div class="product-rating">

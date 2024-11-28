@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Log;
 
 class AddressController extends Controller
 {
@@ -23,9 +24,9 @@ class AddressController extends Controller
      */
     public function create()
     {
-        $title = 'checkout';
+        $title = 'tambah alamat';
         $count = Auth::check() ? Auth::user()->carts->count() : 0;
-        return view('user.addresses.create',compact('title','count'));
+        return view('user.addresses.create', compact('title', 'count'));
     }
 
     /**
@@ -33,21 +34,24 @@ class AddressController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|numeric|max_digits:20',
             'street' => 'required|string|max:255',
         ]);
 
         Address::create([
             'user_id' => Auth::id(),
-            'name' => $request->name,
-            'phone_number' => $request->phone,
-            'address' => $request->street,
+            'name' => $validated['name'],
+            'phone_number' => $validated['phone'],
+            'address' => $validated['street'],
+            'is_default' => $request->has('is_default'),
         ]);
 
         return redirect()->route('checkout')->with('success', 'Alamat berhasil ditambahkan.');
     }
+
 
     /**
      * Menampilkan form untuk mengedit alamat.
@@ -58,31 +62,34 @@ class AddressController extends Controller
         if ($address->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
+        $title = 'Ubah Alamat';
+        $count = Auth::check() ? Auth::user()->carts->count() : 0;
 
-        return view('addresses.edit', compact('address'));
+        return view('user.addresses.edit', compact('address','title','count'));
     }
 
     /**
      * Memperbarui data alamat di database.
      */
-    public function update(Request $request, Address $address)
+    public function update(Request $request, $id)
     {
-        if ($address->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'street' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'postal_code' => 'required|string|max:10',
+            'phone_number' => 'required|numeric|max_digits:20',
+            'address' => 'required|string|max:255',
         ]);
 
-        $address->update($request->all());
+        $address = Address::findOrFail($id);
+        $address->update([
+            'name' => $validated['name'],
+            'phone_number' => $validated['phone_number'],
+            'address' => $validated['address'],
+            'is_default' => $request->has('is_default'),
+        ]);
 
-        return redirect()->route('addresses.index')->with('success', 'Alamat berhasil diperbarui.');
+        return redirect()->route('checkout')->with('success', 'Alamat berhasil diperbarui.');
     }
+
 
     /**
      * Menghapus alamat dari database.
