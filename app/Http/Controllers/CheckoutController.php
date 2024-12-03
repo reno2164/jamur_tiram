@@ -80,10 +80,10 @@ class CheckoutController extends Controller
         // Simpan transaksi
         $transaction = Transaction::create([
             'user_id' => $user->id,
-            'transaction_code' => strtoupper(Str::random(10)), // Buat kode transaksi unik
+            'transaction_code' => 'TRX-' . now()->format('Ymd') . '-' . $user->id . '-' . strtoupper(Str::random(6)),
             'total_price' => $totalPrice,
             'payment_method' => $validatedData['payment_method'],
-            'status' => $validatedData['payment_method'] === 'cod' ? 'Pesanan Disiapkan' : 'Menunggu Pembayaran', // Status default
+            'status' => $validatedData['payment_method'] === 'cod' ? 'Sedang Dikemas' : 'Belum Dibayar', 
             'address_id' => $selectedAddress->id,
         ]);
         // Simpan detail transaksi dan perbarui stok produk
@@ -141,8 +141,7 @@ class CheckoutController extends Controller
                 $snapToken = Snap::getSnapToken($midtransParams);
                 $title = 'checkout';
                 $count = Auth::check() ? Auth::user()->carts->count() : 0;
-                // Set status transaksi menjadi 'Menunggu Pembayaran'
-                $transaction->update(['status' => 'Menunggu Pembayaran']);
+                $transaction->update(['status' => 'Belum Dibayar']);
 
                 return view('user.payment', compact('snapToken', 'transaction', 'title', 'count'));
             } catch (\Exception $e) {
@@ -155,29 +154,19 @@ class CheckoutController extends Controller
         }
     }
 
-    public function handleNotification(Request $request)
-    {
-        $payload = $request->getContent();
-        $notification = json_decode($payload);
-
-        if ($notification->transaction_status === 'settlement') {
-            Transaction::where('transaction_code', $notification->order_id)
-                ->update(['status' => 'Pesanan Disiapkan']);
-        }
-
-        return response()->json(['message' => 'Notification received successfully']);
-    }
     public function handlePaymentNotification(Request $request)
     {
         // Konfigurasi Midtrans
         Config::$serverKey = config('midtrans.serverKey');
-        Config::$isProduction = false; // Ubah ke true jika di production
+        Config::$isProduction = false;
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
         try {
+            // Validasi notifikasi dari Midtrans
             $notification = new Notification();
 
+            // Ambil data notifikasi
             $transactionStatus = $notification->transaction_status;
             $orderId = $notification->order_id; // Transaction Code
             $paymentType = $notification->payment_type;
@@ -187,28 +176,31 @@ class CheckoutController extends Controller
             $transaction = Transaction::where('transaction_code', $orderId)->first();
 
             if (!$transaction) {
+                Log::error('Transaksi dengan kode ' . $orderId . ' tidak ditemukan.');
                 return response()->json(['message' => 'Transaksi tidak ditemukan'], 404);
             }
 
             // Update status transaksi berdasarkan status pembayaran dari Midtrans
             if ($transactionStatus === 'capture') {
                 if ($paymentType === 'credit_card') {
-                    if ($fraudStatus === 'challenge') {
-                        $transaction->status = 'Menunggu Verifikasi';
-                    } else {
-                        $transaction->status = 'Pesanan Disiapkan'; // Berhasil
-                    }
+                    $transaction->status = ($fraudStatus === 'challenge') ? 'Menunggu Verifikasi' : 'Sedang Dikemas';
+                } else {
+                    $transaction->status = 'Sedang Dikemas';
                 }
             } elseif ($transactionStatus === 'settlement') {
-                $transaction->status = 'Pesanan Disiapkan'; // Pembayaran selesai
+                $transaction->status = 'Sedang Dikemas';
             } elseif ($transactionStatus === 'pending') {
-                $transaction->status = 'Menunggu Pembayaran';
-            } elseif ($transactionStatus === 'deny' || $transactionStatus === 'expire' || $transactionStatus === 'cancel') {
+                $transaction->status = 'Belum Dibayar';
+            } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                $transaction->status = 'Gagal';
+            } else {
+                Log::warning('Status pembayaran tidak dikenali: ' . $transactionStatus);
                 $transaction->status = 'Gagal';
             }
 
             $transaction->save();
 
+            Log::info('Status transaksi ' . $orderId . ' berhasil diperbarui: ' . $transaction->status);
             return response()->json(['message' => 'Notifikasi pembayaran berhasil diproses'], 200);
         } catch (\Exception $e) {
             Log::error('Error handling Midtrans notification: ' . $e->getMessage());
@@ -216,12 +208,13 @@ class CheckoutController extends Controller
         }
     }
 
+
     public function pay($transaction_code)
     {
         $transaction = Transaction::where('transaction_code', $transaction_code)->firstOrFail();
 
-        // Pastikan status transaksi adalah "Menunggu Pembayaran"
-        if ($transaction->status !== 'Menunggu Pembayaran') {
+        // Pastikan status transaksi adalah "Belum Dibayar"
+        if ($transaction->status !== 'Belum Dibayar') {
             return redirect()->route('riwayat')->withErrors(['payment' => 'Transaksi ini tidak valid untuk pembayaran ulang.']);
         }
 
@@ -241,10 +234,12 @@ class CheckoutController extends Controller
                 'email' => $transaction->user->email,
             ],
             'item_details' => $transaction->transactionDetails->map(function ($detail) {
+                $pricePerGram = intval($detail->product->price / 1000);
+                    $quantityInGrams = intval($detail->quantity * 1000);
                 return [
                     'id' => $detail->product_id,
-                    'price' => $detail->price,
-                    'quantity' => $detail->quantity,
+                    'price' => $pricePerGram,
+                    'quantity' => $quantityInGrams,
                     'name' => $detail->product->title,
                 ];
             })->toArray(),
@@ -257,7 +252,7 @@ class CheckoutController extends Controller
             return view('user.payment', compact('snapToken', 'transaction', 'title', 'count'));
         } catch (\Exception $e) {
             Log::error('Midtrans Error: ' . $e->getMessage());
-            return redirect()->route('riwayat')->withErrors(['payment' => 'Gagal membuat pembayaran ulang.']);
+            return redirect()->route('pesanan.index')->withErrors(['payment' => 'Gagal membuat pembayaran ulang.']);
         }
     }
 

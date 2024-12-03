@@ -3,63 +3,72 @@
         <!-- Sidebar - Brand -->
         <div class="sidebar-brand d-flex align-items-center justify-content-center">
             <a href="/"><-</a>
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin.index')}}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin.index') }}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
                 <div class="sidebar-brand-text mx-3">Admin</div>
             </a>
         </div>
-    
+
         <hr class="sidebar-divider my-0">
-        
-        <li class="nav-item active {{ Request::path() === 'admin' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link" href="{{route('admin.index')}}">
+
+        <li class="nav-item {{ Request::path() === 'admin' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.index') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span></a>
+                <span>Dashboard</span>
+            </a>
         </li>
-    
-        <li class="nav-item active {{ Request::path() === 'admin/product' ? 'badge text-bg-info' : '' }}">
+
+        <li class="nav-item {{ Request::path() === 'admin/product' ? 'active' : '' }}">
             <a class="nav-link collapsed" href="{{ route('product.index') }}">
                 <i class="fas fa-fw fa-cog"></i>
                 <span>Product</span>
             </a>
         </li>
-    
-        <li class="nav-item active {{ Request::path() === 'admin/pelanggan' ? 'badge text-bg-info' : ''}}">
-            <a class="nav-link collapsed" href="{{--route('pelanggan.index')--}}" >
+
+        <li class="nav-item {{ Request::path() === 'admin/pelanggan' ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="#">
                 <i class="fas fa-fw fa-solid fa-users"></i>
                 <span>Pelanggan</span>
             </a>
         </li>
-    
-        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : ''}}">
-            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}" >
+
+        <li class="nav-item {{ Request::path() === 'admin/pesanan' ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}">
                 <i class="fas fa-fw fa-solid fa-file-invoice-dollar"></i>
                 <span>Pesanan</span>
             </a>
         </li>
-    
-        <li class="nav-item active {{ Request::path() === 'admin/dataPenjualan' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link" href="dataPenjualan">
+
+        <li class="nav-item {{ Request::path() === 'admin/DataPenjualan' ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.datapenjualan') }}">
                 <i class="fas fa-fw fa-chart-area"></i>
-                <span>Data Penjualan</span></a>
+                <span>Data Penjualan</span>
+            </a>
         </li>
 
-        <!-- Tambahkan Menu SAW -->
-        <li class="nav-item active {{ Request::path() === 'admin/saw' ? 'badge text-bg-info' : '' }}">
+        <!-- Menu SAW -->
+        <li class="nav-item {{ Request::path() === 'admin/saw' ? 'active' : '' }}">
             <a class="nav-link collapsed" href="{{ route('admin.saw') }}">
                 <i class="fas fa-fw fa-chart-bar"></i>
                 <span>SAW</span>
             </a>
         </li>
-    
-        <li class="nav-item active">
-            <a class="nav-link collapsed" href="#" >
-                <span class="material-symbols-outlined">
-                    logout
-                    </span>
-                <span>Logout</span>
+
+        <!-- Menu TPK -->
+        <li class="nav-item {{ Request::path() === 'admin/tpk' ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="{{ route('admin.tpk') }}">
+                <i class="fas fa-fw fa-cogs"></i>
+                <span>TPK</span>
+            </a>
+        </li>
+
+        <!-- Menu Hasil TPK -->
+        <li class="nav-item {{ Request::path() === 'admin/hasil-tpk' ? 'active' : '' }}">
+            <a class="nav-link collapsed" href="">
+                <i class="fas fa-fw fa-trophy"></i>
+                <span>Hasil TPK</span>
             </a>
         </li>
     </ul>

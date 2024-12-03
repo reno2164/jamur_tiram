@@ -87,7 +87,7 @@
     }
     
     .btn-logout i {
-        color: #fff;
+        color: #fff; 
         font-size: 16px;
     }
     </style>
@@ -108,7 +108,11 @@
                     <a class="nav-link {{ Request::path() == 'shop' ? 'active' : '' }}" href="/shop">Belanja</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link {{ Request::path() == 'contact' ? 'active' : '' }}" href="/contact">Kontak
+                    <a class="nav-link {{ Request::path() == 'contact' ? 'active' : '' }}" href="/kontak">Kontak
+                        </a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="{{ route('pesanan.index') }}">pesanan
                         </a>
                 </li>
                 <li class="nav-item my-auto">
@@ -146,7 +150,7 @@
                                     <i class="fa-solid fa-chart-line"></i> Dashboard Admin
                                 </a>
                             @elseif (Auth::user()->role == 'PGW')
-                                <a href="{{ route('pegawai.index') }}" class="dropdown-item">
+                                <a href="{{ route('admin.index') }}" class="dropdown-item">
                                     <i class="fa-solid fa-clipboard-list"></i> Dashboard Pegawai
                                 </a>
                             @endif
