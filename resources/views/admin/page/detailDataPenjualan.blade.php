@@ -20,7 +20,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>No</th>
                     <th>Nama Produk</th>
                     <th>Harga</th>
                     <th>Jumlah</th>
@@ -32,9 +32,9 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $detail->product->title }}</td>
-                    <td>Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($detail->product->price, 0, ',', '.') }}</td>
                     <td>{{ $detail->quantity }}</td>
-                    <td>Rp {{ number_format($detail->price * $detail->quantity, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
             </tbody>

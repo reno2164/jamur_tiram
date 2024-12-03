@@ -16,15 +16,16 @@
 </head>
 <body>
     <h2>Laporan Pesanan Selesai</h2>
-    <p>Periode: {{ request('start_date') ?? 'Awal' }} - {{ request('end_date') ?? 'Akhir' }}</p>
+    <p>Tanggal: {{ request('start_date') ?? 'Awal' }} - {{ request('end_date') ?? 'Akhir' }}</p>
 
     <table>
         <thead>
             <tr>
-                <th>#</th>
+                <th>No</th>
                 <th>Kode Transaksi</th>
-                <th>Pelanggan</th>
+                <th>Nama Pelanggan</th>
                 <th>Total Harga</th>
+                <th>Jumlah Item</th>
                 <th>Tanggal</th>
             </tr>
         </thead>
@@ -35,6 +36,9 @@
                 <td>{{ $order->transaction_code }}</td>
                 <td>{{ $order->user->username }}</td>
                 <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                <td>
+                    {{ $order->transactionDetails->sum('quantity') }} 
+                </td>
                 <td>{{ $order->created_at->format('d M Y') }}</td>
             </tr>
             @endforeach

@@ -37,14 +37,14 @@
 
     @if ($completedOrders->isEmpty())
         <div class="alert alert-info">
-            Tidak ada pesanan yang selesai untuk periode ini.
+            Tidak ada pesanan yang selesai saat ini.
         </div>
     @else
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>No</th>
                         <th>Kode Transaksi</th>
                         <th>Pelanggan</th>
                         <th>Total Harga</th>

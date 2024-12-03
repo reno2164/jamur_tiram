@@ -149,13 +149,36 @@
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: '{{ session('error') }}',
+                confirmButtonText: 'Coba Lagi'
+            });
+        </script>
+    @endif
 
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}">
     </script>
     <script type="text/javascript">
         const payButton = document.getElementById('pay-button');
         payButton.addEventListener('click', function(event) {
-            event.preventDefault(); 
+            event.preventDefault();
             console.log('Snap Token: {{ $snapToken }}');
             snap.pay('{{ $snapToken }}', {
                 onSuccess: function(result) {

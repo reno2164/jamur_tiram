@@ -21,6 +21,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -56,5 +57,9 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'user_id');
+    }
+    public function tpk()
+    {
+        return $this->hasMany(Tpk::class, 'user_id');
     }
 }

@@ -89,11 +89,35 @@ class AdminController extends Controller
             $query->whereDate('created_at', '<=', $request->end_date);
         }
 
-        $completedOrders = $query->with('user')->get();
+        $completedOrders = $query->with('user','transactionDetails.product')->get();
 
         $pdf = Pdf::loadView('admin.page.downloadPDF', compact('completedOrders'))
             ->setPaper('a4', 'landscape');
 
         return $pdf->download('laporan_pesanan_selesai.pdf');
+    }
+    public function tpk(Request $request)
+    {
+        $results = collect(); // Default kosong
+
+        // Jika filter tanggal diterapkan
+        if ($request->has(['start_date', 'end_date'])) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            // Query untuk mengambil data berdasarkan filter tanggal
+            $results = Transaction::query()
+            ->selectRaw('users.username, SUM(transaction_details.quantity) as total_quantity, SUM(transactions.total_price) as total_price, COUNT(transactions.id) as total_transactions')
+            ->join('users', 'transactions.user_id', '=', 'users.id')
+            ->join('transaction_details', 'transactions.id', '=', 'transaction_details.transaction_id')
+            ->whereBetween('transactions.created_at', [$startDate, $endDate])
+            ->where('transactions.status', 'selesai') // Filter status selesai
+            ->groupBy('users.id', 'users.username')
+            ->orderByDesc('total_price') // Mengurutkan berdasarkan total harga
+            ->get();
+        }
+        $name = 'Tpk';
+        $title = 'Tpk';
+        return view('admin.page.tpk', compact('results', 'title', 'name'));
     }
 }
