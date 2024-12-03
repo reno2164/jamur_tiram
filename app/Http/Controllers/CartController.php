@@ -10,7 +10,7 @@ class CartController extends Controller
 {
     public function index()
     {
-        
+
         $carts = Auth::user()->carts->with('product')->get();
 
         return view('user.cart', compact('carts'));
@@ -28,33 +28,39 @@ class CartController extends Controller
 
     public function updateQuantity(Request $request)
     {
-    $request->validate([
-        'cart_id' => 'required|exists:carts,id',
-        'quantity' => 'required|numeric|min:0.1',
-    ]);
+        $request->validate([
+            'cart_id' => 'required|exists:carts,id',
+            'quantity' => 'required|numeric|min:0.1',
+        ]);
 
-    $cart = Cart::findOrFail($request->cart_id);
-    $product = $cart->product;
+        $cart = Cart::findOrFail($request->cart_id);
+        $product = $cart->product;
 
-    // Validasi stok
-    if ($request->quantity > $product->stok) {
+        // Validasi stok
+        $maxStock = $product->stok;
+        if ($request->unit === 'gram') {
+            $maxStock *= 1000; // Konversi stok ke gram jika unit adalah gram
+        }
+
+        if ($request->quantity > $maxStock) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kuantitas melebihi stok yang tersedia.',
+            ]);
+        }
+
+        // Update quantity dan total harga
+        $cart->quantity = $request->unit === 'gram' ? $request->quantity / 1000 : $request->quantity; // Simpan dalam kg jika unit gram
+        $cart->price = $product->price * $cart->quantity;
+        $cart->save();
+
         return response()->json([
-            'success' => false,
-            'message' => 'Kuantitas melebihi stok yang tersedia.',
+            'success' => true,
+            'message' => 'Kuantitas berhasil diperbarui.',
+            'total_price_item' => $cart->price, // Harga mentah untuk perhitungan di JS
         ]);
     }
 
-    // Update quantity dan total harga
-    $cart->quantity = $request->quantity;
-    $cart->price = $product->price * $request->quantity;
-    $cart->save();
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Kuantitas berhasil diperbarui.',
-        'total_price_item' => number_format($cart->price, 0, ',', '.'),
-    ]);
-}
 
     public function processCheckout(Request $request)
     {

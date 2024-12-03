@@ -35,6 +35,9 @@ class UserController extends Controller
     public function detailProduk(string $id)
     {
         $product = Product::findOrFail($id);
+        if ($product->stok == 0) {
+            return redirect()->back()->with('error', 'Stok produk ini habis');
+        }
         $title = 'Detail Produk';
         $count = Auth::check() ? Auth::user()->carts->count() : 0;
         $isInCart = Cart::where('user_id', Auth::id())

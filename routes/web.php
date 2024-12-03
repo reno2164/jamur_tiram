@@ -21,11 +21,6 @@ Route::get('/shop', [UserController::class, 'shop'])->name('shop');
 Route::get('/kontak', [UserController::class, 'contact'])->name('contact');
 Route::get('DetailProduk/{id}', [UserController::class, 'detailProduk'])->name('product.detail');
 
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.proses'); 
-Route::get('/checkout/success/{transaction_code}', [CheckoutController::class, 'success'])->name('checkout.success');
-
-
 
 
 
@@ -33,7 +28,7 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/keranjang', [UserController::class, 'showCart'])->name('cart');
     Route::post('/keranjang/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
-    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('checkout.proses'); 
+    Route::post('/checkout/proses', [CheckoutController::class, 'checkout'])->name('checkout.proses'); 
     Route::get('/checkout/success/{transaction_code}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::post('/keranjang/update', [UserController::class, 'updateCart'])->name('updateCart');
     Route::get('/keranjang/remove/{cartId}', [UserController::class, 'removeFromCart'])->name('removeFromCart');
@@ -46,13 +41,6 @@ Route::middleware(['auth'])->group(function(){
     Route::get('/pesanan/detail/{transaction_code}', [UserController::class, 'show'])->name('orders.detail');
 });
 
-Route::middleware(['auth',AuthAdmin::class])->group(function(){
-    
-});
-
-Route::middleware(['auth',AuthPegawai::class])->group(function(){
-    Route::get('/pegawai',[PegawaiController::class,'index'])->name('pegawai.index');
-});
 Route::middleware([RoleMiddleware::class.':ADM,PGW'])->group(function(){
     Route::get('/admin',[AdminController::class,'index'])->name('admin.index');
     Route::resource('admin/product', ProductController::class);
@@ -63,4 +51,5 @@ Route::middleware([RoleMiddleware::class.':ADM,PGW'])->group(function(){
     Route::get('admin/DataPenjualan',[AdminController::class,'dataPenjualan'])->name('admin.datapenjualan');
     Route::get('admin/detail-DataPenjualan/{id}', [AdminController::class, 'showDataPenjualan'])->name('admin.orders.showDetail');
     Route::get('/admin/orders/completed/pdf', [AdminController::class, 'downloadPdf'])->name('admin.orders.downloadPdf');
+    Route::get('/admin/tpk', [AdminController::class, 'tpk'])->name('admin.tpk.index');
 });

@@ -58,4 +58,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class, 'user_id');
     }
+    public function tpk()
+    {
+        return $this->hasMany(Tpk::class, 'user_id');
+    }
 }
