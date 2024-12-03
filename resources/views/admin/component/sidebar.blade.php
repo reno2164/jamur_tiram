@@ -2,7 +2,7 @@
     <ul class="navbar-nav bg-black sidebar sidebar-dark accordion px-2" id="accordionSidebar">
         <!-- Sidebar - Brand -->
         <div class="sidebar-brand d-flex align-items-center justify-content-center">
-            <a href="/"><-</a>
+            <a href="/"><</a>
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin.index')}}">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
