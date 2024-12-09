@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -217,3 +218,4 @@ class UserController extends Controller
         return redirect()->route('pesanan.index')->with('error', 'Pesanan tidak dapat dibatalkan.');
     }
 }
+

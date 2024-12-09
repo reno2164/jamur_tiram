@@ -3,15 +3,13 @@
         <!-- Sidebar - Brand -->
         <div class="sidebar-brand d-flex align-items-center justify-content-center">
 
-            <a href="/"><-
-                    <a class="sidebar-brand d-flex align-items-center justify-content-center"
-                        href="{{ route('admin.index') }}">
-                        <div class="sidebar-brand-icon rotate-n-15">
-                            <i class="fas fa-laugh-wink"></i>
-                        </div>
-                        <div class="sidebar-brand-text mx-3">Admin</div>
-                    </a>
-
+            <a href="/"><</a>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin.index')}}">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Admin</div>
+            </a>
         </div>
 
         <hr class="sidebar-divider my-0">
@@ -29,16 +27,17 @@
                 <span>Product</span>
             </a>
         </li>
-
-        <li class="nav-item active {{ Request::path() === 'admin/pelanggan' ? 'badge text-bg-info' : '' }}">
-
-            <a class="nav-link collapsed" href="{{-- route('pelanggan.index') --}}">
+    
+        <li class="nav-item active {{ Request::path() === 'admin/users' ? 'badge text-bg-info' : ''}}">
+            <a class="nav-link collapsed" href="{{ route('manage.users') }}">
                 <i class="fas fa-fw fa-solid fa-users"></i>
-                <span>Pelanggan</span>
+                <span>User Management</span>
             </a>
         </li>
-        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}">
+        
+    
+        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : ''}}">
+            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}" >
                 <i class="fas fa-fw fa-solid fa-file-invoice-dollar"></i>
                 <span>Pesanan</span>
             </a>
@@ -55,17 +54,11 @@
         <li class="nav-item {{ Request::path() === 'admin/saw' ? 'active' : '' }}">
             <a class="nav-link collapsed" href="{{ route('admin.saw') }}">
                 <i class="fas fa-fw fa-chart-bar"></i>
-                <span>SAW</span>
-            </a>
-        </li>
-
-        <!-- Menu TPK -->
-        <li class="nav-item {{ Request::path() === 'admin/tpk' ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="{{ route('admin.tpk') }}">
-                <i class="fas fa-fw fa-cogs"></i>
                 <span>TPK</span>
             </a>
         </li>
+
+
 
         <!-- Menu Hasil TPK -->
         <li class="nav-item {{ Request::path() === 'admin/hasil-tpk' ? 'active' : '' }}">

@@ -64,4 +64,5 @@ class AdminController extends Controller
         $detail = []; // Contoh: data dummy
         return view('admin.tpk.detail', compact('detail'));
     }
+    
 }

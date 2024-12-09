@@ -21,75 +21,74 @@
         </div>
     </form>
 
-    <!-- Tabel Data TPK -->
-    <div class="card mt-4">
-        <div class="card-header bg-warning text-white">
-            <strong>Data TPK (AHP & SAW)</strong>
-        </div>
-        <div class="card-body table-container">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nama</th>
-                        <th>Harga</th>
-                        <th>Berat</th>
-                        <th>Pembelian</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($tpk_data as $data)
-                        <tr>
-                            <td>{{ $data->username }}</td>
-                            <td>Rp {{ number_format($data->total_price, 0, ',', '.') }}</td>
-                            <td>{{ $data->total_weight }} kg</td>
-                            <td>{{ $data->pembelian_bulan }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+   <!-- Tabel Data TPK -->
+<div class="card mt-4">
+    <div class="card-header bg-warning text-white">
+        <strong>Data TPK (AHP & SAW)</strong>
     </div>
+    <div class="card-body table-container">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nama</th>
+                    <th>Harga</th>
+                    <th>Berat</th>
+                    <th>Pembelian</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($tpk_data as $data)
+                    <tr>
+                        <td>{{ $data->username }}</td>
+                        <td>Rp {{ number_format($data->total_price, 0, ',', '.') }}</td>
+                        <td>{{ $data->total_weight }} kg</td>
+                        <td>{{ $data->pembelian_bulan }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <!-- Form Input Bobot -->
-    <form action="{{ route('admin.saw') }}" method="POST" class="mt-4">
-        @csrf
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <strong>Input Bobot Kriteria</strong>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Kriteria</th>
-                            <th>Bobot</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Harga</td>
-                            <td>
-                                <input type="number" name="bobot_harga" class="form-control" step="0.0001" placeholder="Masukkan bobot (contoh: 0.0001)" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Berat</td>
-                            <td>
-                                <input type="number" name="bobot_berat" class="form-control" step="0.0001" placeholder="Masukkan bobot (contoh: 0.0001)" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Pembelian Bulan</td>
-                            <td>
-                                <input type="number" name="bobot_pembelian_bulan" class="form-control" step="0.0001" placeholder="Masukkan bobot (contoh: 0.0001" required>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button type="submit" class="btn btn-success mt-3">Proses</button>
-            </div>
-        </div>
-    </form>
+<!-- Tombol Bobot AHP -->
+<form action="{{ route('admin.calculate_ahp') }}" method="POST" class="mt-3">
+    @csrf
+    <button type="submit" class="btn btn-secondary">Hitung Bobot AHP</button>
+</form>
+
+<!-- Tabel Hasil Bobot AHP -->
+@if(!empty($bobot_ahp))
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <strong>Hasil Perhitungan Bobot AHP</strong>
+    </div>
+    <div class="card-body table-container">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Kriteria</th>
+                    <th>Bobot</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Harga</td>
+                    <td>{{ number_format($bobot_ahp['harga'], 4) }}</td>
+                </tr>
+                <tr>
+                    <td>Berat</td>
+                    <td>{{ number_format($bobot_ahp['berat'], 4) }}</td>
+                </tr>
+                <tr>
+                    <td>Pembelian dalam Sebulan</td>
+                    <td>{{ number_format($bobot_ahp['pembelian'], 4) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+@endif
+
 
     <!-- Tabel Hasil Peringkat -->
     @if(!empty($sorted_data) && $sorted_data->isNotEmpty())

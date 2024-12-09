@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transaction; 
-use App\Models\User; // Import model User
+use App\Models\Transaction;
+use App\Models\User;
 
 class SAWController extends Controller
 {
@@ -32,13 +32,14 @@ class SAWController extends Controller
         }
     
         $sorted_data = collect(); // Variabel untuk hasil perhitungan SAW
+        $bobot_ahp = $this->calculateAHP(); // Ambil bobot dari metode calculateAHP
     
         // Hanya proses perhitungan jika tombol Proses diklik
         if ($request->isMethod('post')) {
-            // Bobot kriteria dari input form
-            $bobot_harga = $request->input('bobot_harga', 0.4429);
-            $bobot_berat = $request->input('bobot_berat', 0.3873);
-            $bobot_pembelian_bulan = $request->input('bobot_pembelian_bulan', 0.1698);
+            // Bobot kriteria dari AHP
+            $bobot_harga = $bobot_ahp['harga'];
+            $bobot_berat = $bobot_ahp['berat'];
+            $bobot_pembelian_bulan = $bobot_ahp['pembelian'];
     
             // Perhitungan TPK dengan SAW
             foreach ($tpk_data as $user) {
@@ -54,6 +55,41 @@ class SAWController extends Controller
         // Kirim data ke view
         $title = 'tpk';
         $name = 'tpk';
-        return view('admin.saw', compact('tpk_data', 'sorted_data', 'title', 'name'));
+        return view('admin.saw', compact('tpk_data', 'sorted_data', 'title', 'name', 'bobot_ahp'));
     }
-}    
+
+    // Metode untuk menghitung bobot AHP
+    public function calculateAHP()
+    {
+        // Matriks perbandingan berpasangan
+        $matriks = [
+            [1, 1, 3],       // Harga
+            [1, 1, 2],       // Berat
+            [1/3, 1/2, 1],   // Pembelian dalam Sebulan
+        ];
+
+        // Total kolom
+        $totalKolom = array_map(function ($index) use ($matriks) {
+            return array_sum(array_column($matriks, $index));
+        }, array_keys($matriks[0]));
+
+        // Normalisasi matriks
+        $normalisasi = array_map(function ($row) use ($totalKolom) {
+            return array_map(function ($value, $total) {
+                return $value / $total;
+            }, $row, $totalKolom);
+        }, $matriks);
+
+        // Hitung nilai eigen vector (bobot)
+        $eigenVector = array_map(function ($row) {
+            return array_sum($row) / count($row);
+        }, $normalisasi);
+
+        // Simpan bobot ke dalam array
+        return [
+            'harga' => $eigenVector[0],
+            'berat' => $eigenVector[1],
+            'pembelian' => $eigenVector[2],
+        ];
+    }
+}

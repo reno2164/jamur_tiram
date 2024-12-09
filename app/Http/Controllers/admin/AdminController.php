@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Models\tpk;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -36,23 +37,37 @@ class AdminController extends Controller
     }
 
     public function updateStatus($id)
-    {
-        // Ambil transaksi berdasarkan ID
-        $transaction = Transaction::findOrFail($id);
+{
+    // Ambil transaksi berdasarkan ID
+    $transaction = Transaction::with('transactionDetails')->findOrFail($id);
 
-        // Periksa apakah status saat ini adalah "Sedang Dikemas"
-        if ($transaction->status === 'Sedang Dikemas') {
-            // Ubah status menjadi "Selesai"
-            $transaction->status = 'Selesai';
-            $transaction->save();
+    // Periksa apakah status saat ini adalah "Sedang Dikemas"
+    if ($transaction->status === 'Sedang Dikemas') {
+        // Ubah status menjadi "Selesai"
+        $transaction->status = 'Selesai';
+        $transaction->save();
 
-            return redirect()->route('admin.datapenjualan')
-                ->with('success', 'Status pesanan berhasil diperbarui menjadi Selesai.');
-        }
+        // Hitung data untuk tabel TPK
+        $userId = $transaction->user_id;
+        $totalQuantity = $transaction->transactionDetails->sum('quantity'); // Total kuantitas dari detail transaksi
+        $totalPrice = $transaction->total_price; // Total harga dari transaksi
+        $totalTransactions = $transaction->transactionDetails->count(); // Jumlah item dalam transaksi (jumlah baris di detail transaksi)
 
-        return redirect()->route('admin.pesanan')
-            ->with('error', 'Status pesanan tidak dapat diubah.');
+        // Simpan data ke tabel TPK
+        tpk::create([
+            'user_id' => $userId,
+            'quantity' => $totalQuantity,
+            'price' => $totalPrice,
+            'transactions' => $totalTransactions,
+        ]);
+
+        return redirect()->route('admin.datapenjualan')
+            ->with('success', 'Status pesanan berhasil diperbarui menjadi Selesai dan data TPK telah dibuat.');
     }
+
+    return redirect()->route('admin.pesanan')
+        ->with('error', 'Status pesanan tidak dapat diubah.');
+}
     public function dataPenjualan(Request $request)
     {
         $name = 'Data Penjualan';
