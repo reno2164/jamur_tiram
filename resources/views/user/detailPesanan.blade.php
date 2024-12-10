@@ -172,6 +172,7 @@
                     </div>
                 </div>
             @endforeach
+            
         </div>
 
         <div class="summary">

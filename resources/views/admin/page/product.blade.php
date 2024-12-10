@@ -3,10 +3,25 @@
 @section('content')
 <div class="card rounded-full">
     <div class="card-header bg-transparent d-flex justify-content-between">
-        <a href="{{ route('product.create') }}" class="btn btn-info">
-            <i class="fa-solid fa-plus"></i>Tambah Produk</a>
-        <input type="text" wire:model="search" class="form-control w-25" placeholder="Search....">
-    </div>
+        <!-- Tombol Tambah Produk -->
+        <a href="{{ route('product.create') }}" class="btn btn-info ">
+            <i class="fa-solid fa-plus"></i> Tambah Produk
+        </a>
+    
+        <!-- Form Pencarian -->
+        <form action="{{ route('admin.products.index') }}" method="GET" class="d-flex mb-0">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ old('search', $search ?? '') }}" 
+                class="form-control w-10" 
+                placeholder="Search..."
+            >
+            <button type="submit" class="btn btn-primary ms-2">
+                <i class="fa-solid fa-search"></i>
+            </button>
+        </form>
+    </div>    
     <div class="card-body">
         <table class="table table-striped">
             <thead>

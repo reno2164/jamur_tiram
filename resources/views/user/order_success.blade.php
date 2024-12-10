@@ -169,7 +169,8 @@
             icon: 'success',
             title: 'Berhasil!',
             text: '{{ session('success') }}',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
+            timer: 2000
         });
     </script>
 @endif
@@ -180,7 +181,8 @@
             icon: 'error',
             title: 'Gagal!',
             text: '{{ session('error') }}',
-            confirmButtonText: 'Coba Lagi'
+            confirmButtonText: 'Coba Lagi',
+            timer: 2000
         });
     </script>
 @endif

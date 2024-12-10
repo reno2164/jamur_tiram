@@ -1,167 +1,211 @@
 <style>
-    /* Container utama */
-    .select {
-        position: relative;
-        cursor: pointer;
-    }
-    
-    /* Profil User */
-    .profile-img {
-        width: 45px;
-        height: 45px;
-        object-fit: cover;
-    }
-    
-    .profile-info {
-        color: #ffffff;
-    }
-    
-    .username {
-        font-weight: 600;
-        font-size: 14px;
-    }
-    
-    .email {
-        font-size: 12px;
-        color: #e0e0e0;
-    }
-    
-    /* Dropdown menu */
-    #links-login {
-        position: absolute;
-        top: 60px;
-        right: 0;
-        background-color: #2c2c2c;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
-        padding: 10px;
-        width: 200px;
-        display: none;
-        z-index: 10;
-    }
-    
-    .select:hover #links-login {
-        display: block;
-    }
-    
-    .dropdown-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px;
-        color: #fff;
-        text-decoration: none;
-        font-size: 14px;
-        transition: background-color 0.3s;
-    }
-    
-    .dropdown-item:hover {
-        background-color: #494949;
-        border-radius: 5px;
-    }
-    
-    .dropdown-item i {
-        color: #6c63ff;
-        font-size: 16px;
-    }
-    
-    /* Tombol Logout */
-    .btn-logout {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 100%;
-        border: none;
-        background: #e53935;
-        color: #fff;
-        padding: 10px;
-        font-size: 14px;
-        text-align: left;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    
-    .btn-logout:hover {
-        background-color: #c62828;
-    }
-    
-    .btn-logout i {
-        color: #fff; 
-        font-size: 16px;
-    }
-    </style>
-<nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #49443a">
+    /* Gaya Dropdown Profil */
+.profile-img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.email {
+    font-size: 12px;
+    color: #d4d4d4;
+}
+
+/* Menu Dropdown */
+/* Gaya Profil Dropdown */
+.profile-img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 0px solid #fff;
+}
+
+.username {
+    font-weight: 600;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.email {
+    font-size: 12px;
+    color: #ffffff;
+}
+
+/* Dropdown Menu Styling */
+.dropdown-menu {
+    border-radius: 12px;
+    padding: 8px 0;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+.dropdown-item {
+    font-size: 14px;
+    padding: 10px 16px;
+    transition: background-color 0.3s, color 0.3s;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropdown-item i {
+    font-size: 18px;
+}
+
+.dropdown-item:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.dropdown-divider {
+    margin: 4px 0;
+}
+
+/* Tombol Logout */
+.dropdown-item.text-danger:hover {
+    background-color: #f8d7da;
+    color: #dc3545;
+}
+
+
+/* Notifikasi Badge */
+.notif .circle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    background: #ff1616;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 50%;
+    padding: 1px 6px;
+    font-weight: bold;
+    margin: 8px;
+}
+
+/* Tombol Logout */
+.btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    background: #e53935;
+    color: #fff;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-logout:hover {
+    background-color: #d32f2f;
+}
+
+</style>
+
+<nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #49443a;">
     <div class="container">
-        <a class="navbar-brand fs-6" href="/">Jamur Tiram <br>Putra Pandawa</a>
+        <a class="navbar-brand fs-5" href="/">Jamur Tiram <br>Putra Pandawa</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end gap-4" id="navbarSupportedContent">
             <ul class="navbar-nav gap-4">
+                <!-- Link Navigasi -->
                 <li class="nav-item my-auto">
-                    <a class="nav-link {{ Request::path() == '/' ? 'active' : '' }}" aria-current="page"
-                        href="/">Beranda</a>
+                    <a class="nav-link {{ Request::path() == '/' ? 'active' : '' }}" aria-current="page" href="/">Beranda</a>
                 </li>
                 <li class="nav-item my-auto">
                     <a class="nav-link {{ Request::path() == 'shop' ? 'active' : '' }}" href="/shop">Belanja</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link {{ Request::path() == 'contact' ? 'active' : '' }}" href="/kontak">Kontak
-                        </a>
+                    <a class="nav-link {{ Request::path() == 'kontak' ? 'active' : '' }}" href="/kontak">Kontak</a>
                 </li>
                 <li class="nav-item my-auto">
-                    <a class="nav-link {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="{{ route('pesanan.index') }}">pesanan
-                        </a>
+                    <a class="nav-link {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="/pesanan">Pesanan</a>
                 </li>
-                <li class="nav-item my-auto">
-                    <div class="notif">
-                        <a href="{{ route('riwayat') }}" class="fs-5 nav-link {{ Request::path() == 'riwayat-pembelian' ? 'active' : '' }}">
-                            <i class="fa-regular fa-bell"></i>
-                        </a>
-                    </div>
+
+                <!-- Notifikasi -->
+                <li class="nav-item my-auto notif">
+                    <a href="{{ route('riwayat') }}" class="fs-5 nav-link position-relative">
+                        <i class="fa-regular fa-bell"></i>
+                        {{-- <span class="circle">3</span> --}}
+                    </a>
                 </li>
-                <li class="nav-item my-auto">
-                    <div class="notif">
-                        <a href="{{ route('cart') }}" class="fs-5 nav-link {{ Request::path() == 'keranjang' ? 'active' : '' }}">
-                            <i class="fa-solid fa-cart-plus"></i>
-                        </a>
+
+                <!-- Keranjang Belanja -->
+                <li class="nav-item my-auto notif">
+                    <a href="{{ route('cart') }}" class="fs-5 nav-link position-relative">
+                        <i class="fa-solid fa-cart-plus"></i>
                         @if ($count)
-                            <div class="circle">{{ $count }}</div>
+                            <span class="circle">{{ $count }}</span>
                         @endif
-                    </div>
+                    </a>
                 </li>
+
+                <!-- Dropdown Profil -->
                 @auth
-                    <div class="select" tabindex="0" role="button">
-                        <div class="text-links">
-                            <div class="d-flex gap-2 align-items-center">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s" 
-                                    class="rounded-circle profile-img" alt="Profile Image">
-                                <div class="d-flex flex-column profile-info">
-                                    <p class="m-0 username">{{ Auth::user()->username }}</p>
-                                    <p class="m-0 email">{{ Auth::user()->email }}</p>
-                                </div>
-                            </div>
+                <li class="nav-item dropdown">
+                    <div class="nav-link dropdown-toggle d-flex align-items-center gap-2"  role="button"
+                        id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- Profil Gambar -->
+                        <img src="{{ Auth::user()->profile_image ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s' }}"
+                            class="rounded-circle profile-img" alt="Profile Image">
+                        <!-- Informasi User -->
+                        <div class="text-start">
+                            <p class="m-0 username">{{ Auth::user()->username }}</p>
+                            <small class="email">{{ Auth::user()->email }}</small>
                         </div>
-                        <div class="links-login" id="links-login">
-                            @if (Auth::user()->role == 'ADM')
-                                <a href="{{ route('admin.index') }}" class="dropdown-item">
-                                    <i class="fa-solid fa-chart-line"></i> Dashboard Admin
+                    </div>
+                
+                    <!-- Dropdown Menu -->
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="profileDropdown">
+                        <!-- Role-Based Navigation -->
+                        @if (Auth::user()->role === 'ADM')
+                            <li>
+                                <a href="{{ route('admin.index') }}" class="dropdown-item d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-primary"></i>
+                                    <span>Dashboard Admin</span>
                                 </a>
-                            @elseif (Auth::user()->role == 'PGW')
-                                <a href="{{ route('admin.index') }}" class="dropdown-item">
-                                    <i class="fa-solid fa-clipboard-list"></i> Dashboard Pegawai
+                            </li>
+                        @elseif (Auth::user()->role === 'PGW')
+                            <li>
+                                <a href="{{ route('admin.index') }}" class="dropdown-item d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-clipboard-list text-info"></i>
+                                    <span>Dashboard Pegawai</span>
                                 </a>
-                            @endif
-                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                            </li>
+                        @endif
+                
+                        <!-- Separator -->
+                        <li><hr class="dropdown-divider"></li>
+                
+                        <!-- Tombol Logout -->
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn-logout">
-                                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                    <span>Keluar</span>
                                 </button>
                             </form>
-                        </div>
-                    </div>
+                        </li>
+                    </ul>
+                </li>
+                
                 @else
                     <li class="nav-item my-auto">
                         <a href="/login" class="btn btn-outline-light">Masuk</a>
@@ -173,13 +217,13 @@
 </nav>
 
 <script>
-    $(".text-links").click(function(e) {
-        e.preventDefault();
-        var $linksLogin = $("#links-login");
-        if ($linksLogin.hasClass("activeLogin")) {
-            $linksLogin.removeClass("activeLogin");
+    document.addEventListener("click", function(e) {
+        const dropdown = document.querySelector(".select");
+        const linksLogin = document.querySelector("#links-login");
+        if (dropdown.contains(e.target)) {
+            linksLogin.classList.toggle("activeLogin");
         } else {
-            $linksLogin.addClass("activeLogin");
+            linksLogin.classList.remove("activeLogin");
         }
     });
 </script>

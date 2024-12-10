@@ -2,6 +2,55 @@
 
 @section('content')
     <style>
+        .swal2-popup {
+            background: rgba(255, 255, 255, 0.6) !important;
+            /* Transparansi lebih halus */
+            backdrop-filter: blur(10px);
+            /* Blur lebih intens */
+            border-radius: 20px;
+            /* Sudut melengkung */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+            /* Bayangan lembut */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            /* Border halus */
+        }
+
+        /* Title and Content Styling */
+        .swal2-title {
+            font-size: 1.8rem !important;
+            /* Ukuran font judul */
+            font-weight: bold !important;
+            /* Tebal */
+            color: #333 !important;
+            /* Warna teks */
+            text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+            /* Bayangan halus */
+        }
+
+        .swal2-content {
+            font-size: 1.2rem !important;
+            /* Ukuran font isi */
+            color: #444 !important;
+            /* Warna teks isi */
+        }
+
+        /* Button Styling */
+        .swal2-confirm {
+            background: linear-gradient(135deg, #4caf50, #81c784) !important;
+            /* Gradasi hijau */
+            color: white !important;
+            /* Warna teks putih */
+            font-weight: bold !important;
+            border: none !important;
+            /* Hilangkan border */
+            border-radius: 10px !important;
+            /* Tombol melengkung */
+            padding: 10px 20px !important;
+            /* Padding tombol */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            /* Bayangan tombol */
+        }
+
         /* Container Styling */
         .order-container {
             margin: 20px auto;
@@ -142,12 +191,6 @@
         }
     </style>
 
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @elseif(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
-
     <div class="order-container">
         <ul class="nav nav-tabs order-tabs" id="orderTabs" role="tablist">
             @php
@@ -197,23 +240,46 @@
                                 @if ($order->status === 'Belum Dibayar')
                                     <a href="{{ route('checkout.pay', $order->transaction_code) }}"
                                         class="btn btn-bayar">Bayar</a>
-                                    <form action="{{ route('transactions.cancel', $order->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-cancel">Batalkan</button>
-                                    </form>
+                                    <button type="button" class="btn btn-cancel" data-bs-toggle="modal"
+                                        data-bs-target="#delete{{ $order->id }}">
+                                        Batalkan
+                                    </button>
                                 @elseif ($order->status === 'Sedang Dikemas')
                                     <a href="{{ route('orders.detail', $order->transaction_code) }}"
                                         class="btn btn-detail">Detail</a>
-                                    <form action="{{ route('transactions.cancel', $order->id) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-cancel">Batalkan</button>
-                                    </form>
+                                    <button type="button" class="btn btn-cancel" data-bs-toggle="modal"
+                                        data-bs-target="#delete{{ $order->id }}">
+                                        Batalkan
+                                    </button>
                                 @else
                                     <a href="{{ route('orders.detail', $order->transaction_code) }}"
                                         class="btn btn-detail">Detail</a>
                                 @endif
+                            </div>
+                        </div>
+                        <div class="modal fade" id="delete{{ $order->id }}" tabindex="-1"
+                            aria-labelledby="deleteModalLabel{{ $order->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ $order->id }}">Konfirmasi
+                                            Pembatalan Pesanan</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Apakah Anda yakin ingin membatalkan pesanan ini?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form action="{{ route('transactions.cancel', $order->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-cancel">Ya</button>
+                                        </form>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Tidak</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @empty
@@ -226,5 +292,40 @@
             @endforeach
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // SweetAlert message handling
+        @if (session('success'))
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil!",
+                text: "{{ session('success') }}",
+                showConfirmButton: true,
+                confirmButtonText: "OK",
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    content: 'swal2-content',
+                    confirmButton: 'swal2-confirm'
+                },
+                timer: 2000
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                icon: "error",
+                title: "Gagal!",
+                text: "{{ session('error') }}",
+                showConfirmButton: true,
+                confirmButtonText: "Coba Lagi",
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    content: 'swal2-content',
+                    confirmButton: 'swal2-confirm'
+                },
+                timer: 9000
+            });
+        @endif
+    </script>
 @endsection

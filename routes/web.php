@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\User;
-use App\Http\Middleware\AuthAdmin;
-use App\Http\Middleware\AuthPegawai;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RoleMiddleware;
@@ -11,9 +8,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\admin\AdminController;
-use App\Http\Controllers\pegawai\PegawaiController;
+use App\Http\Controllers\admin\ManagementuserController;
 use App\Http\Controllers\ProductController;
-
 
 Auth::routes();
 Route::get('/', [UserController::class, 'index'])->name('home');
@@ -43,6 +39,7 @@ Route::middleware(['auth'])->group(function(){
 
 Route::middleware([RoleMiddleware::class.':ADM,PGW'])->group(function(){
     Route::get('/admin',[AdminController::class,'index'])->name('admin.index');
+    Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::resource('admin/product', ProductController::class);
     Route::get('/admin/pesanan',[AdminController::class,'pesanan'])->name('admin.pesanan');
     Route::get('/admin/detail-pesanan/{id}', [AdminController::class, 'show'])->name('admin.orders.show');
@@ -52,4 +49,12 @@ Route::middleware([RoleMiddleware::class.':ADM,PGW'])->group(function(){
     Route::get('admin/detail-DataPenjualan/{id}', [AdminController::class, 'showDataPenjualan'])->name('admin.orders.showDetail');
     Route::get('/admin/orders/completed/pdf', [AdminController::class, 'downloadPdf'])->name('admin.orders.downloadPdf');
     Route::get('/admin/tpk', [AdminController::class, 'tpk'])->name('admin.tpk.index');
+    Route::put('/admin/pesanan/update/{id}',[AdminController::class,'update'])->name('admin.transactions.update');
+    Route::get('/admin/users', [ManagementuserController::class, 'manageUsers'])->name('manage.users');
+    Route::get('/admin/users/create', [ManagementuserController::class, 'createUser'])->name('create.users');
+    Route::post('/admin/users/store', [ManagementuserController::class, 'storeUser'])->name('store.user');
+    Route::get('/admin/users/{id}/edit', [ManagementuserController::class, 'editUser'])->name('edit.users');
+    Route::post('/admin/users/{id}/update', [ManagementuserController::class, 'updateUser'])->name('update.users');
+    Route::delete('/admin/users/{id}', [ManagementuserController::class, 'deleteUser'])->name('delete.user');
 });
+

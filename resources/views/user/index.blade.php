@@ -101,7 +101,7 @@
                 </div>
             </div>
             <div class="carousel-item">
-                <img src="{{ asset('image/contoh3.jpg') }}" alt="Jamur Tiram 3" class="d-block w-100"
+                <img src="{{ asset('image/wkwk.gif') }}" alt="Jamur Tiram 3" class="d-block w-100"
                     style="height: 400px; object-fit: cover;">
                 <div class="carousel-caption d-none d-md-block">
                     <h1>Menikmati Jamur Tiram dengan Resep Lezat!</h1>

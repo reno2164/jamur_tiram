@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Models\User;
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -12,10 +14,40 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.page.dashboard', [
-            'name' => 'Dashboard',
-            'title' => 'Admin'
-        ]);
+        $name = 'Dashboard';
+        $title = 'Admin';
+        // Hitung total produk
+        $totalProducts = Product::count();
+
+        // Hitung total stok (produk yang tersedia)
+        $totalStock = Product::sum('stok');
+
+        // Hitung total transaksi selesai
+        $totalTransactions = Transaction::where('status', 'Selesai')->count();
+
+        // Hitung total pendapatan (dari transaksi yang selesai)
+        $totalRevenue = Transaction::where('status', 'Selesai')->sum('total_price');
+
+        // Ambil data transaksi per bulan
+        $transactionsPerMonth = Transaction::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->where('status', 'Selesai')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Hitung jumlah pengguna terdaftar
+        $totalUsers = User::count();
+
+        return view('admin.page.dashboard', compact(
+            'totalProducts',
+            'totalStock',
+            'totalTransactions',
+            'totalRevenue',
+            'transactionsPerMonth',
+            'totalUsers',
+            'name',
+            'title'
+        ));
     }
     public function Pesanan()
     {
