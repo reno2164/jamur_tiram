@@ -108,8 +108,9 @@ class CheckoutController extends Controller
         Cart::where('user_id', $user->id)->delete();
         // Periksa metode pembayaran
         if ($validatedData['payment_method'] === 'bank_transfer') {
+            
             Config::$serverKey = config('midtrans.serverKey');
-            Config::$isProduction = false;
+            Config::$isProduction = config('midtrans.isProduction');
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
@@ -158,7 +159,7 @@ class CheckoutController extends Controller
     {
         // Konfigurasi Midtrans
         Config::$serverKey = config('midtrans.serverKey');
-        Config::$isProduction = false;
+        Config::$isProduction = config('midtrans.isProduction');
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
@@ -192,10 +193,28 @@ class CheckoutController extends Controller
             } elseif ($transactionStatus === 'pending') {
                 $transaction->status = 'Belum Dibayar';
             } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
-                $transaction->status = 'Gagal';
+                foreach ($transaction->transactionDetails as $detail) {
+                    $product = $detail->product;
+    
+                    // Mengupdate stok produk
+                    $product->stok += $detail->quantity;
+                    $product->save();
+                }
+                $transaction->transactionDetails()->delete();
+                // Hapus transaksi
+                $transaction->delete();
             } else {
                 Log::warning('Status pembayaran tidak dikenali: ' . $transactionStatus);
-                $transaction->status = 'Gagal';
+                foreach ($transaction->transactionDetails as $detail) {
+                    $product = $detail->product;
+    
+                    // Mengupdate stok produk
+                    $product->stok += $detail->quantity;
+                    $product->save();
+                }
+                $transaction->transactionDetails()->delete();
+                // Hapus transaksi
+                $transaction->delete();
             }
 
             $transaction->save();
@@ -220,7 +239,7 @@ class CheckoutController extends Controller
 
         // Generate ulang Snap Token
         Config::$serverKey = config('midtrans.serverKey');
-        Config::$isProduction = false;
+        Config::$isProduction = config('midtrans.isProduction');
         Config::$isSanitized = true;
         Config::$is3ds = true;
 

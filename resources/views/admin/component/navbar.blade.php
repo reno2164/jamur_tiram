@@ -1,15 +1,11 @@
-<section>
-    {{ $name }}
+
+<section class="text-black">
+    {{ $name }} 
 </section>
 <!-- Topbar Navbar -->
 <ul class="navbar-nav ml-auto">
-    <!-- Nav Item - Alerts -->
-    <li class="nav-item dropdown no-arrow mx-1">
-        <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" 
-           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        </a>
-    </li>
 
+    <div class="topbar-divider d-none d-sm-block"></div>
     @auth
     <!-- User Profile Dropdown -->
     <div class="dropdown">
@@ -27,7 +23,7 @@
                     <i class="fa-solid fa-chart-line"></i> Dashboard Admin
                 </a>
             @elseif (Auth::user()->role == 'PGW')
-                <a href="{{ route('pegawai.index') }}" class="dropdown-item">
+                <a href="{{ route('admin.index') }}" class="dropdown-item">
                     <i class="fa-solid fa-clipboard-list"></i> Dashboard Pegawai
                 </a>
             @endif

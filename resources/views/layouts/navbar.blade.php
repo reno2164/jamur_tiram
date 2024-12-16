@@ -89,7 +89,7 @@
     color: #fff;
     font-size: 12px;
     border-radius: 50%;
-    padding: 1px 6px;
+    padding: 0px 8px;
     font-weight: bold;
     margin: 8px;
 }
@@ -134,13 +134,16 @@
                 <li class="nav-item my-auto">
                     <a class="nav-link {{ Request::path() == 'kontak' ? 'active' : '' }}" href="/kontak">Kontak</a>
                 </li>
-                <li class="nav-item my-auto">
-                    <a class="nav-link {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="/pesanan">Pesanan</a>
+                <li class="nav-item my-auto notif">
+                    <a class="nav-link position-relative {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="/pesanan">
+                        Pesanan
+                        <span class="circle">{{ $count }}</span>
+                    </a>
                 </li>
 
                 <!-- Notifikasi -->
                 <li class="nav-item my-auto notif">
-                    <a href="{{ route('riwayat') }}" class="fs-5 nav-link position-relative">
+                    <a href="#" class="fs-5 nav-link position-relative">
                         <i class="fa-regular fa-bell"></i>
                         {{-- <span class="circle">3</span> --}}
                     </a>

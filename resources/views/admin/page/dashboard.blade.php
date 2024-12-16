@@ -85,20 +85,15 @@
     const transactionData = @json($transactionsPerMonth);
 
     new Chart(ctx, {
-        type: 'line',
+        type: 'bar', // Mengubah tipe grafik menjadi batang (bar)
         data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
                 label: 'Transaksi',
                 data: Array.from({length: 12}, (_, i) => transactionData[i + 1] || 0),
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2,
-                tension: 0.4,
-                pointBackgroundColor: 'rgb(75, 192, 192)',
-                pointBorderColor: '#fff',
-                pointRadius: 5,
-                fill: true,
+                backgroundColor: 'rgba(75, 192, 192, 0.6)', // Warna batang dengan transparansi
+                borderColor: 'rgba(75, 192, 192, 1)', // Warna border batang
+                borderWidth: 1
             }]
         },
         options: {

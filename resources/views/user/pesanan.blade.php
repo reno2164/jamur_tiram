@@ -240,10 +240,8 @@
                                 @if ($order->status === 'Belum Dibayar')
                                     <a href="{{ route('checkout.pay', $order->transaction_code) }}"
                                         class="btn btn-bayar">Bayar</a>
-                                    <button type="button" class="btn btn-cancel" data-bs-toggle="modal"
-                                        data-bs-target="#delete{{ $order->id }}">
-                                        Batalkan
-                                    </button>
+                                    <a href="{{ route('orders.detail', $order->transaction_code) }}"
+                                        class="btn btn-detail">Detail</a>   
                                 @elseif ($order->status === 'Sedang Dikemas')
                                     <a href="{{ route('orders.detail', $order->transaction_code) }}"
                                         class="btn btn-detail">Detail</a>

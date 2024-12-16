@@ -174,7 +174,7 @@
         </script>
     @endif
 
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}">
+    <script src="{{ config('midtrans.snap_url') }}" data-client-key="{{ config('midtrans.clientKey') }}">
     </script>
     <script type="text/javascript">
         const payButton = document.getElementById('pay-button');

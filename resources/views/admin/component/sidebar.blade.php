@@ -16,7 +16,8 @@
         <li class="nav-item active {{ Request::path() === 'admin' ? 'badge text-bg-info' : '' }}">
             <a class="nav-link" href="{{ route('admin.index') }}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Dashboard</span></a>
+                <span>Dashboard</span>
+            </a>
         </li>
 
         <li class="nav-item active {{ Request::path() === 'admin/product' ? 'badge text-bg-info' : '' }}">
@@ -32,10 +33,10 @@
                 <span>User Management</span>
             </a>
         </li>
-
-        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}">
-
+        
+    
+        <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : ''}}">
+            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}" >
                 <i class="fas fa-fw fa-solid fa-file-invoice-dollar"></i>
                 <span>Pesanan</span>
             </a>
@@ -44,13 +45,26 @@
         <li class="nav-item active {{ Request::path() === 'admin/DataPenjualan' ? 'badge text-bg-info' : '' }}">
             <a class="nav-link" href="{{ route('admin.datapenjualan') }}">
                 <i class="fas fa-fw fa-chart-area"></i>
-                <span>Data Penjualan</span></a>
+                <span>Data Penjualan</span>
+            </a>
         </li>
+        @if (Auth::user()->role == 'ADM')
+        <!-- Menu SAW -->
         <li class="nav-item active {{ Request::path() === 'admin/tpk' ? 'badge text-bg-info' : '' }}">
-            <a class="nav-link" href="{{ route('admin.tpk.index') }}">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Tpk</span></a>
+            <a class="nav-link collapsed" href="{{ route('spk.saw.index') }}">
+                <i class="fas fa-fw fa-chart-bar"></i>
+                <span>TPK</span>
+            </a>
         </li>
+        @endif
+
+
+        <!-- Menu Hasil TPK -->
+        <li class="nav-item active {{ Request::path() === 'hasil-tpk' ? 'badge text-bg-info' : '' }}">
+            <a class="nav-link collapsed" href="{{ route('hasil.tpk.index') }}">
+                <i class="fas fa-fw fa-trophy"></i>
+                <span>Hasil TPK</span>
+            </a>
 
         <li class="nav-item active">
             <form action="{{ route('logout') }}" method="POST">
@@ -62,6 +76,7 @@
                     <span>Logout</span>
                 </button>
             </form>
+
         </li>
     </ul>
 </div>

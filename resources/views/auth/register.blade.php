@@ -226,11 +226,6 @@
             <p>Sudah punya akun? <a href="{{ route('login') }}">Masuk sekarang!</a></p>
         </div>
     </form>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
 </body>
 
 </html>

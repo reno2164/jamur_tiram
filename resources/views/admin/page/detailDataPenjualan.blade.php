@@ -22,7 +22,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama Produk</th>
-                    <th>Harga</th>
+                    <th>Harga/Kg</th>
                     <th>Jumlah</th>
                     <th>Subtotal</th>
                 </tr>
