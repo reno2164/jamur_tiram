@@ -34,7 +34,7 @@ class UserController extends Controller
         return view('user.contact', compact( 'title', 'count'));
     }
     public function detailProduk(string $id)
-    {
+    {                                   
         $product = Product::findOrFail($id);
         if ($product->stok == 0) {
             return redirect()->back()->with('error', 'Stok produk ini habis');
