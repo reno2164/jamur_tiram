@@ -13,7 +13,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #2c2c2c, #A0522D);
@@ -230,3 +229,5 @@
     </div>
     </div>
 </body>
+</html>
+

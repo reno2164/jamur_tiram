@@ -9,7 +9,7 @@
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         </a>
     </li>
-
+    
     @auth
     <!-- User Profile Dropdown -->
     <div class="dropdown">

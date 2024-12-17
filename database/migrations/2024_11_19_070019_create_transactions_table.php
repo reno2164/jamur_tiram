@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('transaction_code')->unique();
             $table->decimal('total_price', 15, 2);
             $table->string('payment_method')->nullable();
-            $table->enum('status', ['Pesanan Disiapkan', 'Berhasil', 'Gagal'])->default('Pesanan Disiapkan');
+            $table->enum('status', ['Sedang Dikemas','Belum Dibayar', 'Selesai', 'Gagal'])->default('Sedang Dikemas');
             $table->foreignId('address_id')->nullable()->constrained('addresses')->onDelete('set null');
             $table->timestamps();
         });

@@ -25,9 +25,20 @@ class UserController extends Controller
             'count' => $countKeranjang
         ]);
     }
+    public function contact()
+    {
+        $title = 'Detail Produk';
+        $count = Auth::check() ? Auth::user()->carts->count() : 0;
+
+        // Pass product data to the view
+        return view('user.contact', compact( 'title', 'count'));
+    }
     public function detailProduk(string $id)
     {
         $product = Product::findOrFail($id);
+        if ($product->stok == 0) {
+            return redirect()->back()->with('error', 'Stok produk ini habis');
+        }
         $title = 'Detail Produk';
         $count = Auth::check() ? Auth::user()->carts->count() : 0;
         $isInCart = Cart::where('user_id', Auth::id())
@@ -37,6 +48,7 @@ class UserController extends Controller
         // Pass product data to the view
         return view('user.detailproduk', compact('product', 'title', 'isInCart', 'count'));
     }
+    
     public function addTocart(Request $request)
     {
         // Validasi input
@@ -155,5 +167,56 @@ class UserController extends Controller
         return view('user.riwayat', compact('transactions', 'title', 'count'));
     }
 
+    public function pesanan()
+    {
+        $title = 'Pesanan';
+        $count = Auth::check() ? Auth::user()->carts->count() : 0;
+        $orders = Transaction::where('user_id', Auth::id())->get();
+        return view('user.pesanan', compact('orders', 'title', 'count'));
+    }
+    public function show($transaction_code)
+    {
+        $title = 'Deatil Pesanan';
+        $count = Auth::check() ? Auth::user()->carts->count() : 0;
+        $order = Transaction::with(['transactionDetails.product', 'address'])
+        ->where('transaction_code', $transaction_code)
+        ->firstOrFail();
+
+        // Pastikan hanya user terkait yang dapat melihat detail pesanan
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+
+        return view('user.detailPesanan', compact('order', 'title', 'count'));
+    }
+    public function cancel($transaction_id)
+    {
+        // Mencari transaksi berdasarkan ID
+        $transaction = Transaction::findOrFail($transaction_id);
+
+        // Pastikan status transaksi masih "Belum Dibayar" atau "Sedang Dikemas"
+        if ($transaction->status === 'Belum Dibayar' || $transaction->status === 'Sedang Dikemas') {
+            // Mengembalikan stok produk yang ada di detail transaksi
+            foreach ($transaction->transactionDetails as $detail) {
+                $product = $detail->product;  // Mendapatkan produk yang terkait dengan detail transaksi
+
+                // Mengupdate stok produk
+                $product->stok += $detail->quantity;  // Menambahkan quantity yang dibatalkan
+                $product->save();  // Menyimpan perubahan stok
+            }
+
+            // Hapus detail transaksi terkait
+            $transaction->transactionDetails()->delete();
+
+            // Hapus transaksi
+            $transaction->delete();
+
+            // Redirect kembali dengan pesan sukses
+            return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.');
+        }
+
+        // Jika status sudah tidak memungkinkan untuk dibatalkan
+        return redirect()->route('pesanan.index')->with('error', 'Pesanan tidak dapat dibatalkan.');
+    }
 }
 

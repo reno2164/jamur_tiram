@@ -87,56 +87,80 @@
     }
 
     .btn-logout i {
-        color: #fff;
+        color: #fff; 
         font-size: 16px;
     }
 </style>
 
 <nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #49443a">
-<div class="container">
-    <a class="navbar-brand fs-6" href="/">Jamur Tiram <br>Putra Pandawa</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end gap-4" id="navbarSupportedContent">
-        <ul class="navbar-nav gap-4">
-            <li class="nav-item my-auto">
-                <a class="nav-link {{ Request::path() == '/' ? 'active' : '' }}" aria-current="page" href="/">Beranda</a>
-            </li>
-            <li class="nav-item my-auto">
-                <a class="nav-link {{ Request::path() == 'shop' ? 'active' : '' }}" href="/shop">Belanja</a>
-            </li>
-            <li class="nav-item my-auto">
-                <a class="nav-link {{ Request::path() == 'contact' ? 'active' : '' }}" href="/contact">Kontak</a>
-            </li>
-            <li class="nav-item my-auto">
-                <div class="notif">
-                    <a href="{{ route('riwayat') }}" class="fs-5 nav-link {{ Request::path() == 'riwayat-pembelian' ? 'active' : '' }}">
-                        <i class="fa-regular fa-bell"></i>
-                    </a>
-                </div>
-            </li>
-            <li class="nav-item my-auto">
-                <div class="notif">
-                    <a href="{{ route('cart') }}" class="fs-5 nav-link {{ Request::path() == 'keranjang' ? 'active' : '' }}">
-                        <i class="fa-solid fa-cart-plus"></i>
-                    </a>
-                    @if ($count)
-                        <div class="circle">{{ $count }}</div>
-                    @endif
-                </div>
-            </li>
-            @auth
-                <div class="select">
-                    <div class="text-links">
-                        <div class="d-flex gap-2 align-items-center">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s" 
-                                class="rounded-circle profile-img" alt="Profile Image">
-                            <div class="d-flex flex-column profile-info">
-                                <p class="m-0 username">{{ Auth::user()->username }}</p>
-                                <p class="m-0 email">{{ Auth::user()->email }}</p>
+    <div class="container">
+        <a class="navbar-brand fs-6" href="/">Jamur Tiram <br>Putra Pandawa</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end gap-4" id="navbarSupportedContent">
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item my-auto">
+                    <a class="nav-link {{ Request::path() == '/' ? 'active' : '' }}" aria-current="page"
+                        href="/">Beranda</a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link {{ Request::path() == 'shop' ? 'active' : '' }}" href="/shop">Belanja</a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link {{ Request::path() == 'contact' ? 'active' : '' }}" href="/kontak">Kontak
+                        </a>
+                </li>
+                <li class="nav-item my-auto">
+                    <a class="nav-link {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="{{ route('pesanan.index') }}">Pesanan
+                        </a>
+                </li>
+                <li class="nav-item my-auto">
+                    <div class="notif">
+                        <a href="{{ route('riwayat') }}" class="fs-5 nav-link {{ Request::path() == 'riwayat-pembelian' ? 'active' : '' }}">
+                            <i class="fa-regular fa-bell"></i>
+                        </a>
+                    </div>
+                </li>
+                <li class="nav-item my-auto">
+                    <div class="notif">
+                        <a href="{{ route('cart') }}" class="fs-5 nav-link {{ Request::path() == 'keranjang' ? 'active' : '' }}">
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </a>
+                        @if ($count)
+                            <div class="circle">{{ $count }}</div>
+                        @endif
+                    </div>
+                </li>
+                @auth
+                    <div class="select" tabindex="0" role="button">
+                        <div class="text-links">
+                            <div class="d-flex gap-2 align-items-center">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7gTERsv3nO-4I-R9C00Uor_m_nmxT0sE9Cg&s" 
+                                    class="rounded-circle profile-img" alt="Profile Image">
+                                <div class="d-flex flex-column profile-info">
+                                    <p class="m-0 username">{{ Auth::user()->username }}</p>
+                                    <p class="m-0 email">{{ Auth::user()->email }}</p>
+                                </div>
                             </div>
+                        </div>
+                        <div class="links-login" id="links-login">
+                            @if (Auth::user()->role == 'ADM')
+                                <a href="{{ route('admin.index') }}" class="dropdown-item">
+                                    <i class="fa-solid fa-chart-line"></i> Dashboard Admin
+                                </a>
+                            @elseif (Auth::user()->role == 'PGW')
+                                <a href="{{ route('admin.index') }}" class="dropdown-item">
+                                    <i class="fa-solid fa-clipboard-list"></i> Dashboard Pegawai
+                                </a>
+                            @endif
+                            <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                                @csrf
+                                <button type="submit" class="btn-logout">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <div class="links-login" id="links-login">

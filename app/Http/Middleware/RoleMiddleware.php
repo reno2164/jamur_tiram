@@ -18,7 +18,11 @@ class RoleMiddleware
     {
         if (Auth::check() && in_array(Auth::user()->role, $roles)){
             return $next($request);
+        }else{
+            if(!Auth::check()){
+                return redirect()->route('login');
+            }
+            return redirect()->back()->with('error', 'anda tidak memilik akses');
         }
-        return response()->json(['massage'=>'Anda Tidak Memiliki Akses', 403]);
     }
 }

@@ -90,7 +90,12 @@
                 @foreach ($data as $p)
                     <div class="col-md-3 mb-4">
                         <div class="product-card position-relative">
-                            <a href="{{ route('product.detail', $p->id) }}" class="text-decoration-none text-dark">
+                            <!-- Cek stok produk -->
+                            @if ($p->stok > 0)
+                                <a href="{{ route('product.detail', $p->id) }}" class="text-decoration-none text-dark">
+                                @else
+                                    <span class="text-decoration-none text-dark">
+                            @endif
                             <!-- Discount Badge -->
                             @if ($p->discount > 0)
                                 <div class="badge-discount">-{{ $p->discount }}%</div>
@@ -102,11 +107,18 @@
                             <!-- Product Info -->
                             <div class="product-info">
                                 <div class="product-title">{{ $p->title }}</div>
-                                <div class="product-price">Rp {{ number_format($p->price - ($p->price * $p->discount / 100)) }}</div>
+                                <div class="product-price">
+                                    Rp {{ number_format($p->price - ($p->price * $p->discount) / 100) }}
+                                </div>
                                 @if ($p->discount > 0)
                                     <div class="product-original-price">Rp {{ number_format($p->price) }}</div>
                                 @endif
-                                <p class="text-success">Tersedia : {{ $p->stok }} Kg</p>
+                                @if ($p->stok > 0)
+                                    <p class="text-success">Tersedia: {{ $p->stok }} Kg</p>
+                                @else
+                                    <p class="text-danger">Habis</p>
+                                @endif
+
                                 <!-- Ratings and Sales -->
                                 <div class="d-flex justify-content-between align-items-center mt-2">
                                     <div class="product-rating">
@@ -116,7 +128,11 @@
                                     <div>{{ $p->qty_out }} Terjual</div>
                                 </div>
                             </div>
-                            </a>
+                            @if ($p->stok > 0)
+                                </a>
+                            @else
+                                </span>
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -132,4 +148,26 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // SweetAlert message handling
+    @if (session('success'))
+        Swal.fire({
+            icon: "success",
+            title: "BERHASIL",
+            text: "{{ session('success') }}",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    @elseif (session('error'))
+        Swal.fire({
+            icon: "error",
+            title: "GAGAL!",
+            text: "{{ session('error') }}",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    @endif
+</script>
 @endsection

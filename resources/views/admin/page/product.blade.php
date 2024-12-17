@@ -64,7 +64,7 @@
                                         @csrf
                                         <div class="mb-3">
                                             <label for="additional_stock" class="form-label">Jumlah Stok yang Ditambahkan</label>
-                                            <input type="number" name="additional_stock" id="additional_stock" class="form-control" min="1" required>
+                                            <input type="number" name="additional_stock" id="additional_stock" class="form-control" step="0.01" required>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-success">Tambah Stok</button>

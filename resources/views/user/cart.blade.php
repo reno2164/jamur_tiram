@@ -81,121 +81,121 @@
         }
     </style>
     <div class="container">
-            <form action="{{ route('checkout') }}" method="POST" id="cartForm">
-                @csrf
-                <div class="container">
-                    <h1>Keranjang Belanja</h1>
-                    @if ($carts->isEmpty())
-                        <p>Keranjang Anda kosong. </p>
-                        <a href="{{ route('shop') }}" class="btn btn-warning">Belanja Sekarang</a>
+        <form action="{{ route('checkout') }}" method="POST" id="cartForm">
+            @csrf
+            <div class="container">
+                <h1>Keranjang Belanja</h1>
+                @if ($carts->isEmpty())
+                    <p>Keranjang Anda kosong. </p>
+                    <a href="{{ route('shop') }}" class="btn btn-warning">Belanja Sekarang</a>
+                @else
+                    <table class="table table-borderless align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col">Produk</th>
+                                <th scope="col">Harga/Kg</th>
+                                <th scope="col">Jumlah</th>
+                                <th scope="col">Total Harga</th>
+                                <th scope="col">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $totalPrice = 0; @endphp
+                            @foreach ($carts as $cart)
+                                <tr data-cart-id="{{ $cart->id }}">
 
-                    @else
-                        <table class="table table-borderless align-middle">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Produk</th>
-                                    <th scope="col">Harga Satuan</th>
-                                    <th scope="col">Kuantitas</th>
-                                    <th scope="col">Total Harga</th>
-                                    <th scope="col">Aksi</th>
+                                    <!-- Product Info -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ asset('storage/products/' . $cart->product->image) }}"
+                                                alt="{{ $cart->product->title }}" class="product-image" width="80">
+                                            <div class="ms-3">
+                                                <h5>{{ $cart->product->title }}</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Price per unit -->
+                                    <td>
+                                        <span>Rp {{ number_format($cart->product->price, 0, ',', '.') }}</span>
+                                    </td>
+
+                                    <!-- Quantity Input -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <!-- Input jumlah -->
+                                            <input type="text" min="0.1" max="{{ $cart->product->stok }}"
+                                                name="quantity[{{ $cart->id }}]" value="{{ $cart->quantity }}"
+                                                class="form-control quantity-input" style="width: 80px;"
+                                                data-cart-id="{{ $cart->id }}"
+                                                data-stock="{{ $cart->product->stok }}">
+
+                                            <!-- Dropdown untuk memilih satuan -->
+                                            <select name="unit[{{ $cart->id }}]" class="form-select ms-2 unit-select"
+                                                style="width: 80px;" data-cart-id="{{ $cart->id }}">
+                                                <option value="kg" selected>kg</option>
+                                                <option value="gram">gram</option>
+                                            </select>
+
+                                        </div>
+                                    </td>
+
+                                    <!-- Total Price -->
+                                    <td>
+                                        @php
+                                            $totalPriceItem = $cart->product->price * $cart->quantity;
+                                            $totalPrice += $totalPriceItem;
+                                        @endphp
+                                        <span class="item-total-price">Rp
+                                            {{ number_format($totalPriceItem, 0, ',', '.') }}</span>
+                                    </td>
+
+                                    <!-- Remove Button -->
+                                    <td>
+                                        <a href="{{ route('removeFromCart', $cart->id) }}"
+                                            class="btn btn-danger btn-sm">x</a>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @php $totalPrice = 0; @endphp
-                                @foreach ($carts as $cart)
-                                    <tr data-cart-id="{{ $cart->id }}">
+                            @endforeach
+                        </tbody>
+                    </table>
 
-                                        <!-- Product Info -->
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="{{ asset('storage/products/' . $cart->product->image) }}"
-                                                    alt="{{ $cart->product->title }}" class="product-image" width="80">
-                                                <div class="ms-3">
-                                                    <h5>{{ $cart->product->title }}</h5>
-                                                </div>
-                                            </div>
-                                        </td>
-
-                                        <!-- Price per unit -->
-                                        <td>
-                                            <span>Rp {{ number_format($cart->product->price, 0, ',', '.') }}</span>
-                                        </td>
-
-                                        <!-- Quantity Input -->
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <!-- Input jumlah -->
-                                                <input type="text" min="0.1" max="{{ $cart->product->stok }}"
-                                                    name="quantity[{{ $cart->id }}]" value="{{ $cart->quantity }}"
-                                                    class="form-control quantity-input" style="width: 80px;"
-                                                    data-cart-id="{{ $cart->id }}"
-                                                    data-stock="{{ $cart->product->stok }}">
-
-                                                <!-- Dropdown untuk memilih satuan -->
-                                                <select name="unit[{{ $cart->id }}]"
-                                                    class="form-select ms-2 unit-select" style="width: 80px;"
-                                                    data-cart-id="{{ $cart->id }}">
-                                                    <option value="kg" selected>kg</option>
-                                                    <option value="gram">gram</option>
-                                                </select>
-
-                                            </div>
-                                        </td>
-
-                                        <!-- Total Price -->
-                                        <td>
-                                            @php
-                                                $totalPriceItem = $cart->product->price * $cart->quantity;
-                                                $totalPrice += $totalPriceItem;
-                                            @endphp
-                                            <span class="item-total-price">Rp
-                                                {{ number_format($totalPriceItem, 0, ',', '.') }}</span>
-                                        </td>
-
-                                        <!-- Remove Button -->
-                                        <td>
-                                            <a href="{{ route('removeFromCart', $cart->id) }}"
-                                                class="btn btn-danger btn-sm">x</a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{{ route('checkout') }}" id="checkoutButton" class="btn btn-success">Checkout</a>
-                        </div>
-                    @endif
-                </div>
-            </form>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ route('checkout') }}" id="checkoutButton" class="btn btn-success">Checkout</a>
+                    </div>
+                @endif
+            </div>
+        </form>
     </div>
 
     <script>
-        document.getElementById('checkoutButton').addEventListener('click', function () {
-        let invalidQuantity = false;
+        document.getElementById('checkoutButton').addEventListener('click', function() {
+            let invalidQuantity = false;
 
-        document.querySelectorAll('.quantity-input').forEach(input => {
-            const stock = parseFloat(input.getAttribute('data-stock'));
-            const unit = document.querySelector(`.unit-select[data-cart-id="${input.getAttribute('data-cart-id')}"]`).value;
-            const quantity = parseFloat(input.value.replace(',', '.')) || 0;
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const stock = parseFloat(input.getAttribute('data-stock'));
+                const unit = document.querySelector(
+                    `.unit-select[data-cart-id="${input.getAttribute('data-cart-id')}"]`).value;
+                const quantity = parseFloat(input.value.replace(',', '.')) || 0;
 
-            // Validasi stok berdasarkan unit
-            let maxStock = stock; // Default untuk kg
-            if (unit === 'gram') {
-                maxStock = stock * 1000; // Konversi ke gram
-            }
+                // Validasi stok berdasarkan unit
+                let maxStock = stock; // Default untuk kg
+                if (unit === 'gram') {
+                    maxStock = stock * 1000; // Konversi ke gram
+                }
 
-            if (quantity > maxStock || quantity <= 0) {
-                invalidQuantity = true;
+                if (quantity > maxStock || quantity <= 0) {
+                    invalidQuantity = true;
+                }
+            });
+
+            if (invalidQuantity) {
+                alert(
+                'Ada produk yang melebihi stok yang tersedia atau jumlah tidak valid. Mohon periksa kembali.');
+            } else {
+                document.getElementById('cartForm').submit(); // Lanjutkan ke checkout
             }
         });
-
-        if (invalidQuantity) {
-            alert('Ada produk yang melebihi stok yang tersedia atau jumlah tidak valid. Mohon periksa kembali.');
-        } else {
-            document.getElementById('cartForm').submit(); // Lanjutkan ke checkout
-        }
-    });
         // Fungsi untuk menangani perubahan unit
         function handleUnitChange(event) {
             const cartId = event.target.getAttribute('data-cart-id');
@@ -230,17 +230,19 @@
 
             let maxStock = stock;
             if (unit === 'gram') {
-                maxStock = stock * 1000;
+                maxStock = stock * 1000; // Konversi ke gram
             }
 
             let quantity = parseFloat(input.value.replace(',', '.')) || 0;
 
             // Validasi kuantitas
             if (quantity > maxStock) {
-                input.value = maxStock;
-                alert('Jumlah melebihi stok yang tersedia!');
+                input.value = maxStock; // Set ke stok maksimum
+                quantity = maxStock; // Perbarui nilai untuk sinkronisasi
+                alert('Jumlah melebihi stok yang tersedia! Kuantitas diatur ke stok maksimum.');
             } else if (quantity <= 0) {
-                input.value = '';
+                input.value = ''; // Kosongkan jika nilai tidak valid
+                return; // Jangan lanjutkan jika kuantitas tidak valid
             }
 
             // Kirim data kuantitas baru ke server
@@ -252,15 +254,19 @@
                     },
                     body: JSON.stringify({
                         cart_id: cartId,
-                        quantity: unit === 'gram' ? quantity / 1000 : quantity
+                        quantity: unit === 'gram' ? quantity / 1000 :
+                            quantity // Kirim nilai dalam kg jika unit gram
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
                         // Update total harga item di UI
-                        document.querySelector(`tr[data-cart-id="${cartId}"] .item-total-price`).textContent = 'Rp ' +
-                            data.total_price_item.toLocaleString('id-ID');
+                        const itemTotalPriceElement = document.querySelector(
+                            `tr[data-cart-id="${cartId}"] .item-total-price`);
+                        if (itemTotalPriceElement) {
+                            itemTotalPriceElement.textContent = 'Rp ' + data.total_price_item.toLocaleString('id-ID');
+                        }
 
                         // Update total harga keseluruhan
                         updateTotalPrice();
