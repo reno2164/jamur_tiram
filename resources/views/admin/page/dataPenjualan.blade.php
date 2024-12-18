@@ -3,18 +3,6 @@
 @section('content')
 <div class="container mt-5">
 
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
     <!-- Filter Tanggal -->
     <form action="{{ route('admin.datapenjualan') }}" method="GET" class="mb-4">
         <div class="row">
@@ -49,7 +37,7 @@
                         <th>Pelanggan</th>
                         <th>Total Harga</th>
                         <th>Tanggal</th>
-                        <th>Opsi</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,4 +60,29 @@
         </div>
     @endif
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if (session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
+            confirmButtonText: 'OK',
+            timer: 2000
+        });
+    </script>
+@endif
+
+@if (session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: '{{ session('error') }}',
+            confirmButtonText: 'Coba Lagi',
+            timer: 2000
+        });
+    </script>
+@endif
 @endsection

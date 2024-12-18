@@ -3,9 +3,13 @@
 @section('content')
     <div class="card rounded-full">
         <div class="card-header bg-transparent d-flex justify-content-between">
+            @if (Auth::user()->role == 'ADM')
             <a href="{{ route('create.users') }}" class="btn btn-info">
                 <i class="fa-solid fa-plus"></i> Tambah User
             </a>
+            @else
+                <div></div>
+            @endif
             <input type="text" wire:model="search" class="form-control w-25" placeholder="Search....">
         </div>
         <div class="card-body">
@@ -16,7 +20,9 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th>Role</th>
+                        @if (Auth::user()->role == 'ADM')
                         <th>Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -26,6 +32,7 @@
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->role }}</td>
+                            @if (Auth::user()->role == 'ADM')
                             <td>
                                 <a href="" class="btn btn-sm btn-dark"><i class="fa-solid fa-eye"></i></a>
                                 <a href="{{ route('edit.users', $user->id) }}" class="btn btn-sm btn-warning"><i
@@ -37,6 +44,7 @@
                                     <i class="fa fa-trash"></i>
 
                             </td>
+                            @endif
                         </tr>
                         <!-- Modal Konfirmasi Hapus -->
                         <div class="modal fade" id="delete{{ $user->id }}" tabindex="-1"

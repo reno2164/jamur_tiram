@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <style>
-         /* Global Styling */
-         * {
+        /* Global Styling */
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #2c2c2c, #A0522D);
@@ -149,6 +151,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="background">
         <div class="shape"></div>
@@ -159,13 +162,13 @@
         @csrf
 
         <div class="row mb-3">
-            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
+            <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('username') }}</label>
 
             <div class="col-md-6">
-                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
-                    name="username" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
+                    name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
 
-                @error('name')
+                @error('username')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -195,7 +198,7 @@
                     name="password" required autocomplete="new-password">
                 @error('password')
                     <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>  
+                        <strong>{{ $message }}</strong>
                     </span>
                 @enderror
             </div>
@@ -224,10 +227,11 @@
         </div>
     </form>
     </div>
+
     </div>
     </div>
     </div>
     </div>
 </body>
-</html>
+
 

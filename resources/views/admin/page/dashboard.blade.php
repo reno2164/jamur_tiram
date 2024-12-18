@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="d-flex flex-wrap gap-3 justify-content-center">
+    <!-- Total Produk -->
     <div class="card shadow" style="width: 200px; border: none; background-color: #F8F9FA;">
         <div class="card-body text-center">
             <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
@@ -11,9 +12,11 @@
                 </span>
             </div>
             <h5 class="text-success">Total Product</h5>
-            <span class="fs-2 fw-bold">2</span>
+            <span class="fs-2 fw-bold">{{ $totalProducts }}</span>
         </div>
     </div>
+
+    <!-- Total Stok -->
     <div class="card shadow" style="width: 200px; border: none; background-color: #F8F9FA;">
         <div class="card-body text-center">
             <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
@@ -23,9 +26,11 @@
                 </span>
             </div>
             <h5 class="text-danger">Total Stock</h5>
-            <span class="fs-2 fw-bold">30</span>
+            <span class="fs-2 fw-bold">{{ $totalStock }}</span>
         </div>
     </div>
+
+    <!-- Total Transaksi -->
     <div class="card shadow" style="width: 200px; border: none; background-color: #F8F9FA;">
         <div class="card-body text-center">
             <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
@@ -35,9 +40,11 @@
                 </span>
             </div>
             <h5 class="text-primary">Transaksi</h5>
-            <span class="fs-2 fw-bold">50</span>
+            <span class="fs-2 fw-bold">{{ $totalTransactions }}</span>
         </div>
     </div>
+
+    <!-- Total Pendapatan -->
     <div class="card shadow" style="width: 200px; border: none; background-color: #F8F9FA;">
         <div class="card-body text-center">
             <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
@@ -46,8 +53,22 @@
                     payments
                 </span>
             </div>
-            <h5 class="text-warning">Penghasilan</h5>
-            <span class="fs-2 fw-bold">40</span>
+            <h5 class="text-warning">Pendapatan</h5>
+            <span class="fs-2 fw-bold">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</span>
+        </div>
+    </div>
+
+    <!-- Total Pengguna -->
+    <div class="card shadow" style="width: 200px; border: none; background-color: #F8F9FA;">
+        <div class="card-body text-center">
+            <div class="d-flex gap-2 align-items-center justify-content-center mb-2">
+                <span class="material-icons p-1 rounded-circle" 
+                    style="font-size:28px; color:#0056b3; background-color:#87CEEB">
+                    people
+                </span>
+            </div>
+            <h5 class="text-info">Total Users</h5>
+            <span class="fs-2 fw-bold">{{ $totalUsers }}</span>
         </div>
     </div>
 </div>
@@ -61,21 +82,18 @@
 
 <script>
     const ctx = document.getElementById('myChart');
+    const transactionData = @json($transactionsPerMonth);
+
     new Chart(ctx, {
-        type: 'line',
+        type: 'bar', // Mengubah tipe grafik menjadi batang (bar)
         data: {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
                 label: 'Transaksi',
-                data: [12, 19, 3, 5, 2, 3, 12, 19, 3, 5, 2, 3],
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2,
-                tension: 0.4,
-                pointBackgroundColor: 'rgb(75, 192, 192)',
-                pointBorderColor: '#fff',
-                pointRadius: 5,
-                fill: true,
+                data: Array.from({length: 12}, (_, i) => transactionData[i + 1] || 0),
+                backgroundColor: 'rgba(75, 192, 192, 0.6)', // Warna batang dengan transparansi
+                borderColor: 'rgba(75, 192, 192, 1)', // Warna border batang
+                borderWidth: 1
             }]
         },
         options: {

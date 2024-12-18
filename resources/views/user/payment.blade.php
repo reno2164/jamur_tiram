@@ -139,6 +139,7 @@
                     </li>
                 </ul>
             </div>
+            
             <form action="api/midtrans/notification" method="POST">
                 @csrf
                 <div class="payment-action">
@@ -173,7 +174,7 @@
         </script>
     @endif
 
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.clientKey') }}">
+    <script src="{{ config('midtrans.snap_url') }}" data-client-key="{{ config('midtrans.clientKey') }}">
     </script>
     <script type="text/javascript">
         const payButton = document.getElementById('pay-button');

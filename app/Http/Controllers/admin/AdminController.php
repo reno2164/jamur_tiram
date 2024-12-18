@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\admin;
 
+
+use App\Models\User;
+use App\Models\Product;
+use App\Models\tpk;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -12,10 +16,40 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.page.dashboard', [
-            'name' => 'Dashboard',
-            'title' => 'Admin'
-        ]);
+        $name = 'Dashboard';
+        $title = 'Admin';
+        // Hitung total produk
+        $totalProducts = Product::count();
+
+        // Hitung total stok (produk yang tersedia)
+        $totalStock = Product::sum('stok');
+
+        // Hitung total transaksi selesai
+        $totalTransactions = Transaction::where('status', 'Selesai')->count();
+
+        // Hitung total pendapatan (dari transaksi yang selesai)
+        $totalRevenue = Transaction::where('status', 'Selesai')->sum('total_price');
+
+        // Ambil data transaksi per bulan
+        $transactionsPerMonth = Transaction::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->where('status', 'Selesai')
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Hitung jumlah pengguna terdaftar
+        $totalUsers = User::count();
+
+        return view('admin.page.dashboard', compact(
+            'totalProducts',
+            'totalStock',
+            'totalTransactions',
+            'totalRevenue',
+            'transactionsPerMonth',
+            'totalUsers',
+            'name',
+            'title'
+        ));
     }
     public function Pesanan()
     {
@@ -36,23 +70,37 @@ class AdminController extends Controller
     }
 
     public function updateStatus($id)
-    {
-        // Ambil transaksi berdasarkan ID
-        $transaction = Transaction::findOrFail($id);
+{
+    // Ambil transaksi berdasarkan ID
+    $transaction = Transaction::with('transactionDetails')->findOrFail($id);
 
-        // Periksa apakah status saat ini adalah "Sedang Dikemas"
-        if ($transaction->status === 'Sedang Dikemas') {
-            // Ubah status menjadi "Selesai"
-            $transaction->status = 'Selesai';
-            $transaction->save();
+    // Periksa apakah status saat ini adalah "Sedang Dikemas"
+    if ($transaction->status === 'Sedang Dikemas') {
+        // Ubah status menjadi "Selesai"
+        $transaction->status = 'Selesai';
+        $transaction->save();
 
-            return redirect()->route('admin.datapenjualan')
-                ->with('success', 'Status pesanan berhasil diperbarui menjadi Selesai.');
-        }
+        // Hitung data untuk tabel TPK
+        $userId = $transaction->user_id;
+        $totalQuantity = $transaction->transactionDetails->sum('quantity'); // Total kuantitas dari detail transaksi
+        $totalPrice = $transaction->total_price; // Total harga dari transaksi
+        $totalTransactions = $transaction->transactionDetails->count(); // Jumlah item dalam transaksi (jumlah baris di detail transaksi)
 
-        return redirect()->route('admin.pesanan')
-            ->with('error', 'Status pesanan tidak dapat diubah.');
+        // Simpan data ke tabel TPK
+        tpk::create([
+            'user_id' => $userId,
+            'quantity' => $totalQuantity,
+            'price' => $totalPrice,
+            'transactions' => $totalTransactions,
+        ]);
+
+        return redirect()->route('admin.datapenjualan')
+            ->with('success', 'Status pesanan berhasil diperbarui menjadi Selesai.');
     }
+
+    return redirect()->route('admin.pesanan')
+        ->with('error', 'Status pesanan tidak dapat diubah.');
+}
     public function dataPenjualan(Request $request)
     {
         $name = 'Data Penjualan';
