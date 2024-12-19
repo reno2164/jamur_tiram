@@ -122,22 +122,7 @@
 
                                     <!-- Quantity Input -->
                                     <td>
-                                        <div class="d-flex align-items-center">
-                                            <!-- Input jumlah -->
-                                            <input type="text" min="0.1" max="{{ $cart->product->stok }}"
-                                                name="quantity[{{ $cart->id }}]" value="{{ $cart->quantity }}"
-                                                class="form-control quantity-input" style="width: 80px;"
-                                                data-cart-id="{{ $cart->id }}"
-                                                data-stock="{{ $cart->product->stok }}">
-
-                                            <!-- Dropdown untuk memilih satuan -->
-                                            <select name="unit[{{ $cart->id }}]" class="form-select ms-2 unit-select"
-                                                style="width: 80px;" data-cart-id="{{ $cart->id }}">
-                                                <option value="kg" selected>kg</option>
-                                                <option value="gram">gram</option>
-                                            </select>
-
-                                        </div>
+                                        <span>{{ $cart->quantity }} kg</span>
                                     </td>
 
                                     <!-- Total Price -->
