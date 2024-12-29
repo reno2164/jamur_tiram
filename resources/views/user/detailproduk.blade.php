@@ -2,7 +2,6 @@
 
 @section('content')
     <style>
-        /* Gaya untuk halaman produk */
         .product-detail {
             margin-top: 40px;
             margin-bottom: 50px;
@@ -176,6 +175,56 @@
                 margin-bottom: 15px;
             }
         }
+
+
+        /* Animasi muncul */
+        @keyframes popup-fadein {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Styling Title */
+    .swal2-title {
+        font-size: 2rem !important; /* Ukuran font besar */
+        font-weight: bold !important;
+        color: #2c3e50 !important; /* Warna teks gelap */
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Bayangan halus */
+        margin-bottom: 10px !important;
+    }
+
+    /* Styling Content */
+    .swal2-content {
+        font-size: 1.2rem !important; /* Ukuran font konten */
+        color: #34495e !important; /* Warna teks */
+        line-height: 1.5 !important; /* Spasi lebih lebar */
+    }
+
+    /* Styling Button */
+    .swal2-confirm {
+        background: linear-gradient(135deg, #6a11cb, #2575fc) !important; /* Gradasi ungu ke biru */
+        color: white !important; /* Teks putih */
+        font-size: 1.1rem !important; /* Ukuran font tombol */
+        font-weight: bold !important;
+        border: none !important;
+        border-radius: 50px !important; /* Tombol melingkar */
+        padding: 10px 30px !important; /* Padding lebih luas */
+        box-shadow: 0 5px 15px rgba(106, 17, 203, 0.5); /* Bayangan tombol */
+        transition: all 0.3s ease-in-out; /* Efek hover */
+    }
+
+    .swal2-confirm:hover {
+        transform: translateY(-3px) !important; /* Efek melayang */
+        box-shadow: 0 8px 20px rgba(106, 17, 203, 0.8); /* Bayangan hover */
+    }
+
+
     </style>
     <div class="container product-detail">
         <div class="row">
@@ -243,22 +292,35 @@
     <script>
         // SweetAlert message handling
         @if (session('success'))
-            Swal.fire({
-                icon: "success",
-                title: "BERHASIL",
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @elseif (session('error'))
-            Swal.fire({
-                icon: "error",
-                title: "GAGAL!",
-                text: "{{ session('error') }}",
-                showConfirmButton: false,
-                timer: 2000
-            });
-        @endif
+        Swal.fire({
+            icon: "success",
+            title: "🎉 Berhasil!",
+            text: "{{ session('success') }}",
+            showConfirmButton: true,
+            confirmButtonText: "Ok",
+            customClass: {
+                popup: 'swal2-popup',
+                title: 'swal2-title',
+                content: 'swal2-content',
+                confirmButton: 'swal2-confirm'
+            },
+            timer: 2000
+        });
+    @elseif (session('error'))
+        Swal.fire({
+            icon: "error",
+            title: "⚠️ Gagal!",
+            text: "{{ session('error') }}",
+            showConfirmButton: true,
+            confirmButtonText: "Coba Lagi",
+            customClass: {
+                popup: 'swal2-popup',
+                title: 'swal2-title',
+                content: 'swal2-content',
+                confirmButton: 'swal2-confirm'
+            },
+        });
+    @endif
         document.addEventListener('DOMContentLoaded', function() {
             const quantityInput = document.querySelector('.quantity-input input');
             const unitSelect = document.querySelector('.unit-select');

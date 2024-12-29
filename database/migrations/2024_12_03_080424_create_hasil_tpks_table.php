@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('hasil_tpks', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('username');
+            $table->decimal('score', 8, 3); 
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

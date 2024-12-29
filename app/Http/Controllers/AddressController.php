@@ -90,18 +90,4 @@ class AddressController extends Controller
         return redirect()->route('checkout')->with('success', 'Alamat berhasil diperbarui.');
     }
 
-
-    /**
-     * Menghapus alamat dari database.
-     */
-    public function destroy(Address $address)
-    {
-        if ($address->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $address->delete();
-
-        return redirect()->route('addresses.index')->with('success', 'Alamat berhasil dihapus.');
-    }
 }

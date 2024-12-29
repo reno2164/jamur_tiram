@@ -70,7 +70,7 @@
 
 <body>
     <div id="wrapper">
-        <div>@include('admin.component.sidebar')</div>
+        <div class="bg-black">@include('admin.component.sidebar')</div>
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 <nav class="navbar navbar-expand topbar mb-4 static-top shadow">

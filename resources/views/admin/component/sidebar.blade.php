@@ -1,8 +1,7 @@
-<div>
+<div class="">
     <ul class="navbar-nav bg-black sidebar sidebar-dark accordion px-2" id="accordionSidebar">
         <!-- Sidebar - Brand -->
         <div class="sidebar-brand d-flex align-items-center justify-content-center">
-
             <a href="/"><</a>
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin.index')}}">
                 <div class="sidebar-brand-icon rotate-n-15">
@@ -49,20 +48,20 @@
                 <span>Data Penjualan</span>
             </a>
         </li>
-
+        @if (Auth::user()->role == 'ADM')
         <!-- Menu SAW -->
-        <li class="nav-item {{ Request::path() === 'admin/saw' ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="{{ route('admin.saw') }}">
+        <li class="nav-item active {{ Request::path() === 'admin/tpk' ? 'badge text-bg-info' : '' }}">
+            <a class="nav-link collapsed" href="{{ route('spk.saw.index') }}">
                 <i class="fas fa-fw fa-chart-bar"></i>
                 <span>TPK</span>
             </a>
         </li>
-
+        @endif
 
 
         <!-- Menu Hasil TPK -->
-        <li class="nav-item {{ Request::path() === 'admin/hasil-tpk' ? 'active' : '' }}">
-            <a class="nav-link collapsed" href="">
+        <li class="nav-item active {{ Request::path() === 'hasil-tpk' ? 'badge text-bg-info' : '' }}">
+            <a class="nav-link collapsed" href="{{ route('hasil.tpk.index') }}">
                 <i class="fas fa-fw fa-trophy"></i>
                 <span>Hasil TPK</span>
             </a>

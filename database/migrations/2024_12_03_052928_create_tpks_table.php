@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('tpks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); // Relasi ke User
-            $table->bigInteger('quantity'); // Total kuantitas pembelian (kg)
+            $table->float('quantity'); // Total kuantitas pembelian (kg)
             $table->decimal('price', 15, 2); // Total harga pembelian
             $table->integer('transactions');
             $table->timestamps();
-$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

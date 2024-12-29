@@ -26,18 +26,33 @@ class ProductController extends Controller
      *
      * @return void
      */
-    public function index(): View
-    {
-        //get all products
-        $products = Product::latest()->paginate(10);
-        $best = product::where('qty_out', '>=', 5)->get();
-        //render view with products
-        return view(
-            'admin.page.product',
-            ['title' => 'halaman Products', 'name' => 'Produk'],
-            compact('products', 'best')
-        );
-    }
+    public function index(Request $request): View
+{
+    // Ambil kata kunci pencarian
+    $search = $request->input('search', '');
+
+    // Query produk dengan filter pencarian
+    $products = Product::query()
+        ->where('title', 'like', '%' . $search . '%')
+        ->orWhere('description', 'like', '%' . $search . '%')
+        ->latest()
+        ->paginate(10);
+
+    // Produk dengan stok keluar >= 5
+    $best = Product::where('qty_out', '>=', 5)->get();
+
+    // Kirim data ke view
+    return view(
+        'admin.page.product',
+        [
+            'title' => 'Halaman Products',
+            'name' => 'Produk',
+            'search' => $search, // Untuk mempertahankan nilai input pencarian
+        ],
+        compact('products', 'best')
+    );
+}
+
 
     /**
      * create
@@ -63,7 +78,7 @@ class ProductController extends Controller
             'title'         => 'required',
             'description'   => 'required|min:10',
             'price'         => 'required|numeric|min:0,1',
-            'stok'         => 'required|numeric|min:0,1' 
+            'stok'         => 'required|numeric|min:0,1'
         ]);
 
         //upload image

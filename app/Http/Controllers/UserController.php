@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\User;
+use Midtrans\Config;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Midtrans\Transaction as MidtransTransaction;
 
 
 class UserController extends Controller
@@ -31,7 +32,7 @@ class UserController extends Controller
         $count = Auth::check() ? Auth::user()->carts->count() : 0;
 
         // Pass product data to the view
-        return view('user.contact', compact( 'title', 'count'));
+        return view('user.contact', compact('title', 'count'));
     }
     public function detailProduk(string $id)
     {                                   
@@ -48,7 +49,7 @@ class UserController extends Controller
         // Pass product data to the view
         return view('user.detailproduk', compact('product', 'title', 'isInCart', 'count'));
     }
-    
+
     public function addTocart(Request $request)
     {
         // Validasi input
@@ -178,8 +179,8 @@ class UserController extends Controller
         $title = 'Deatil Pesanan';
         $count = Auth::check() ? Auth::user()->carts->count() : 0;
         $order = Transaction::with(['transactionDetails.product', 'address'])
-        ->where('transaction_code', $transaction_code)
-        ->firstOrFail();
+            ->where('transaction_code', $transaction_code)
+            ->firstOrFail();
 
         // Pastikan hanya user terkait yang dapat melihat detail pesanan
         if ($order->user_id !== Auth::id()) {
@@ -195,13 +196,69 @@ class UserController extends Controller
 
         // Pastikan status transaksi masih "Belum Dibayar" atau "Sedang Dikemas"
         if ($transaction->status === 'Belum Dibayar' || $transaction->status === 'Sedang Dikemas') {
+            // Jika metode pembayaran adalah transfer, cek status transaksi di Midtrans
+            if ($transaction->payment_method === 'bank_transfer') {
+                // Konfigurasi Midtrans
+                Config::$serverKey = config('midtrans.serverKey');
+                Config::$isProduction = false;
+                Config::$isSanitized = true;
+                Config::$is3ds = true;
+
+                try {
+                    // Periksa status transaksi di Midtrans
+                    $midtransStatus = MidtransTransaction::status($transaction->transaction_code);
+
+                    // Jika status transaksi 'settlement', lakukan refund
+                    if ($midtransStatus->transaction_status === 'settlement') {
+                        // Definisikan parameter refund
+                        $refundParams = [
+                            'refund_amount' => $transaction->total_price,  // Sesuaikan dengan jumlah total transaksi
+                        ];
+
+                        // Panggil API Midtrans untuk melakukan refund
+                        $midtransResponse = MidtransTransaction::refund($transaction->transaction_code, $refundParams);
+
+                        // Jika gagal melakukan refund, kembalikan error
+                        if ($midtransResponse->status_code !== '200') {
+                            return redirect()->route('pesanan.index')
+                                ->with('error', 'Gagal melakukan refund di Midtrans: ' . $midtransResponse->status_message);
+                        }
+
+                        // Jika refund berhasil, perbarui status transaksi
+                        $transaction->status = 'Refunded'; // Pastikan status transaksi diperbarui
+                        $transaction->save();
+                    }
+                    // Jika status transaksi belum diproses (pending, authorize), lakukan pembatalan
+                    else if (in_array($midtransStatus->transaction_status, ['pending', 'authorize'])) {
+                        $midtransResponse = MidtransTransaction::cancel($transaction->transaction_code);
+
+                        // Jika gagal membatalkan di Midtrans, kembalikan error
+                        if ($midtransResponse->status_code !== '200') {
+                            return redirect()->route('pesanan.index')
+                                ->with('error', 'Gagal membatalkan transaksi di Midtrans: ' . $midtransResponse->status_message);
+                        }
+
+                        // Jika transaksi berhasil dibatalkan, perbarui status transaksi
+                        $transaction->status = 'Cancelled'; // Pastikan status transaksi diperbarui
+                        $transaction->save();
+                    } else {
+                        // Jika status transaksi tidak memungkinkan dibatalkan
+                        return redirect()->route('pesanan.index')
+                            ->with('error', 'Transaksi tidak dapat dibatalkan karena statusnya: ' . ucfirst($midtransStatus->transaction_status) . '. Hubungi admin untuk bantuan lebih lanjut.');
+                    }
+                } catch (\Exception $e) {
+                    return redirect()->route('pesanan.index')
+                        ->with('error', 'Terjadi kesalahan saat membatalkan transaksi di Midtrans: ' . $e->getMessage());
+                }
+            }
+
             // Mengembalikan stok produk yang ada di detail transaksi
             foreach ($transaction->transactionDetails as $detail) {
-                $product = $detail->product;  // Mendapatkan produk yang terkait dengan detail transaksi
+                $product = $detail->product;
 
                 // Mengupdate stok produk
-                $product->stok += $detail->quantity;  // Menambahkan quantity yang dibatalkan
-                $product->save();  // Menyimpan perubahan stok
+                $product->stok += $detail->quantity;
+                $product->save();
             }
 
             // Hapus detail transaksi terkait
@@ -211,11 +268,9 @@ class UserController extends Controller
             $transaction->delete();
 
             // Redirect kembali dengan pesan sukses
-            return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dibatalkan dan stok produk telah dikembalikan.');
+            return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil dibatalkan.');
         }
-
         // Jika status sudah tidak memungkinkan untuk dibatalkan
         return redirect()->route('pesanan.index')->with('error', 'Pesanan tidak dapat dibatalkan.');
     }
 }
-
