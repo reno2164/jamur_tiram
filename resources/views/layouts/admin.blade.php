@@ -8,6 +8,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet"> <!-- Tambahkan file CSS admin -->
+    <style>
+        /* Pastikan sidebar tetap di tempat */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background-color: #343a40; /* Warna latar sidebar */
+            color: white;
+            overflow-y: auto; /* Tambahkan scroll jika konten sidebar terlalu panjang */
+        }
+
+        /* Konten utama */
+        .main-content {
+            margin-left: 250px; /* Jarak ke kanan sesuai lebar sidebar */
+        }
+    </style>
 </head>
 <body>
     <header class="bg-primary text-white p-3">
@@ -16,7 +34,7 @@
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav class="bg-dark text-white vh-100" style="width: 250px;">
+        <nav class="sidebar">
             <div class="p-3">
                 <h3 class="text-center">ADMIN</h3>
                 <ul class="nav flex-column">
@@ -43,7 +61,7 @@
         </nav>
 
         <!-- Main Content -->
-        <div class="flex-grow-1">
+        <div class="main-content">
             <header class="p-3 bg-light border-bottom">
                 <h4>@yield('title', 'Dashboard Admin')</h4>
             </header>

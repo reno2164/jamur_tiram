@@ -1,3 +1,21 @@
+<head>
+    <style>
+        #accordionSidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px; 
+            z-index: 1000; 
+            overflow-y: auto; 
+        }
+
+        body {
+            margin-left: 250px; 
+        }
+    </style>
+</head>
+
 <div class="">
     <ul class="navbar-nav bg-black sidebar sidebar-dark accordion px-2" id="accordionSidebar">
         <!-- Sidebar - Brand -->
