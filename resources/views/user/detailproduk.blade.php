@@ -265,7 +265,7 @@
             <div class="col-md-6">
                 <form action="{{ route('addTocart') }}" method="POST">
                     <h1 class="mb-3" style="font-size: 28px; font-weight: 600;">{{ $product->title }}</h1>
-                    <p>{{ $product->description }}</p>
+                    <p>{!! $product->description !!}</p>
                     <div class="d-flex align-items-center mb-3">
                         <span class="price">Rp
                             {{ number_format($product->price - ($product->price * $product->discount) / 100) }}</span>
@@ -318,61 +318,69 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const quantityInput = document.querySelector('.quantity-input input');
-            const unitSelect = document.querySelector('.unit-select');
-            const maxStock = parseFloat(quantityInput.getAttribute('data-stock'));
+       document.addEventListener('DOMContentLoaded', function () {
+    const quantityInput = document.querySelector('.quantity-input input');
+    const unitSelect = document.querySelector('.unit-select');
+    const maxStock = parseFloat(quantityInput.getAttribute('data-stock'));
 
-            // Update max input value and adjust quantity when unit changes
-            unitSelect.addEventListener('change', function() {
-                if (unitSelect.value === 'gram') {
-                    quantityInput.value = (parseFloat(quantityInput.value) || 0) * 1000; // Convert to grams
-                } else {
-                    quantityInput.value = (parseFloat(quantityInput.value) || 0) / 1000; // Convert to kg
-                }
-                validateQuantity();
+    // Update max input value and adjust quantity when unit changes
+    unitSelect.addEventListener('change', function () {
+        if (unitSelect.value === 'gram') {
+            quantityInput.value = (parseFloat(quantityInput.value) || 0) * 1000; // Convert to grams
+        } else {
+            quantityInput.value = (parseFloat(quantityInput.value) || 0) / 1000; // Convert to kg
+        }
+        validateQuantity();
+    });
+
+    // Validate quantity input
+    quantityInput.addEventListener('input', function () {
+        // Remove invalid characters and ensure only one comma or dot
+        quantityInput.value = quantityInput.value
+            .replace(/[^0-9.,]/g, '') // Allow only numbers, commas, and dots
+            .replace(/[,\.](?=.*[,.])/g, ''); // Remove additional commas/dots after the first
+
+        // Replace comma with dot for standard decimal handling
+        quantityInput.value = quantityInput.value.replace(',', '.');
+
+        validateQuantity();
+    });
+
+    function validateQuantity() {
+        let value = parseFloat(quantityInput.value) || 0;
+        let minValue = unitSelect.value === 'gram' ? 0 : 0;
+        let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
+
+        if (value < minValue) {
+            quantityInput.value = minValue;
+        } else if (value > maxValue) {
+            quantityInput.value = maxValue;
+        }
+    }
+
+    // Form submission validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (e) {
+        let value = parseFloat(quantityInput.value) || 0;
+        let minValue = unitSelect.value === 'gram' ? 100 : 0.1;
+        let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
+
+        if (value < minValue || value > maxValue) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Peringatan',
+                text: `Jumlah harus antara ${minValue} dan ${maxValue}.`,
+                confirmButtonText: 'OK',
             });
+            return;
+        }
 
-            // Validate quantity input
-            quantityInput.addEventListener('input', function() {
-                quantityInput.value = quantityInput.value.replace(/[^0-9,.]/g, '').replace(',', '.');
-                validateQuantity();
-            });
+        if (unitSelect.value === 'gram') {
+            quantityInput.value = (value / 1000).toFixed(3);
+        }
+    });
+});
 
-            function validateQuantity() {
-                let value = parseFloat(quantityInput.value) || 0;
-                let minValue = unitSelect.value === 'gram' ? 0 : 0;
-                let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
-
-                if (value < minValue) {
-                    quantityInput.value = minValue;
-                } else if (value > maxValue) {
-                    quantityInput.value = maxValue;
-                }
-            }
-
-            // Form submission validation
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                let value = parseFloat(quantityInput.value) || 0;
-                let minValue = unitSelect.value === 'gram' ? 100 : 0.1;
-                let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
-
-                if (value < minValue || value > maxValue) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: '⚠️ Peringatan',
-                        text: `Jumlah harus antara ${minValue} dan ${maxValue}.`,
-                        confirmButtonText: 'OK'
-                    });
-                    return;
-                }
-
-                if (unitSelect.value === 'gram') {
-                    quantityInput.value = (value / 1000).toFixed(3);
-                }
-            });
-        });
     </script>
 @endsection

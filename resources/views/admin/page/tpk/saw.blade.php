@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mb-4">Sistem Pendukung Keputusan (SPK) - Metode SAW</h1>
+        <h1 class="mb-4 text-black">Sistem Pendukung Keputusan (SPK)</h1>
 
         <!-- Filter Tanggal -->
         <form action="{{ route('spk.saw.index') }}" method="GET">
@@ -25,9 +25,9 @@
         @if ($bobot)
             <h3>Bobot Kriteria</h3>
             <ul>
-                <li>Quantity: {{ $bobot->quantity }}</li>
-                <li>Price: {{ $bobot->price }}</li>
-                <li>Transactions: {{ $bobot->transactions }}</li>
+                <li>Total Berat: {{ $bobot->quantity }}</li>
+                <li>Total Harga: {{ $bobot->price }}</li>
+                <li>Banyak Pembelian: {{ $bobot->transactions }}</li>
             </ul>
             <a href="{{ route('admin.tpk') }}" class="btn btn-warning">Edit Bobot</a>
         @else
@@ -40,10 +40,10 @@
                 <thead>
                     <tr>
                         <th>Kode</th>
-                        <th>Kode</th>
-                        <th>berat</th>
-                        <th>Harga</th>
-                        <th>Transaksi</th>
+                        <th>Nama Pelanggan</th>
+                        <th>Total Berat</th>
+                        <th>Total Harga</th>
+                        <th>Banyak Pembelian</th>
                     </tr>
                 </thead>
                 <tbody>

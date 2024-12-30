@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h1 class="mb-4">Detail Hasil TPK</h1>
-    <h3>Waktu: {{ $datetime }}</h3>
+    <h3>Tanggal: {{ $datetime }}</h3>
 
     <table class="table table-bordered">
         <thead>

@@ -14,8 +14,8 @@ class SpkController extends Controller
     {
         // Default kriteria
         $kriteria = ['Jumlah Beli', 'Jumlah Harga', 'Jumlah Berat'];
-        $name = 'Tpk';
-        $title = 'Tpk';
+        $name = 'TPK';
+        $title = 'TPK';
 
         // Tampilkan halaman input
         return view('admin.page.tpk.ahp', compact('kriteria', 'name', 'title'));

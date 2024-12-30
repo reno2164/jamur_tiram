@@ -8,13 +8,23 @@ use App\Http\Controllers\Controller;
 
 class ManagementuserController extends Controller
 {
-    public function manageUsers()
-    {
-        $title = 'User Management';
-        $name = 'User Management';
-        $users = User::paginate(10); // Ambil data user dengan paginasi
-        return view('admin.page.user.manage', compact('users', 'title', 'name'));
-    }
+    public function manageUsers(Request $request)
+{
+    $title = 'User Management';
+    $name = 'User Management';
+
+    // Ambil query pencarian
+    $search = $request->input('search');
+
+    // Query pengguna dengan filter pencarian
+    $users = User::when($search, function ($query, $search) {
+        return $query->where('username', 'like', '%' . $search . '%')
+                     ->orWhere('email', 'like', '%' . $search . '%');
+    })->simplePaginate(10);
+
+    return view('admin.page.user.manage', compact('users', 'title', 'name', 'search'));
+}
+
 
     public function createUser()
 {
