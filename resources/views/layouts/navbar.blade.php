@@ -137,11 +137,15 @@
                 <li class="nav-item my-auto notif">
                     <a class="nav-link position-relative {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="/pesanan">
                         Pesanan
+
                         @auth
                             @if (Auth::user()->transactions()->where('status', '!=', 'Selesai')->count())
                             <span class="circle">{{ Auth::user()->transactions()->where('status', '!=', 'Selesai')->count() }} </span>
                             @endif 
                         @endauth
+
+                        <span class="circle">{{ $count }}</span>
+
                     </a>
                 </li>
 
