@@ -54,11 +54,18 @@
         
     
         <li class="nav-item active {{ Request::path() === 'admin/pesanan' ? 'badge text-bg-info' : ''}}">
-            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}" >
+            <a class="nav-link collapsed" href="{{ route('admin.pesanan') }}">
                 <i class="fas fa-fw fa-solid fa-file-invoice-dollar"></i>
                 <span>Pesanan</span>
+                @php
+                    $pendingOrders = \App\Models\Transaction::where('status', '!=', 'Selesai')->count();
+                @endphp
+                @if ($pendingOrders > 0)
+                    <span class="badge bg-danger ms-2">{{ $pendingOrders }}</span>
+                @endif
             </a>
         </li>
+        
 
         <li class="nav-item active {{ Request::path() === 'admin/DataPenjualan' ? 'badge text-bg-info' : '' }}">
             <a class="nav-link" href="{{ route('admin.datapenjualan') }}">
