@@ -1,0 +1,27 @@
+# Environment files
+.env
+
+# Laravel specific
+/vendor/
+composer.lock
+
+# Cache and logs
+/storage/*.key
+/storage/*.log
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Node dependencies
+/node_modules/
+/public/hot
+/public/storage
+/npm-debug.log
+/yarn-error.log
+
+# IDE and system files
+/.vscode/
+/.idea/
+/.DS_Store
+Thumbs.db
