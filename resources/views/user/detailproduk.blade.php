@@ -75,22 +75,36 @@
         }
 
         .quantity-input {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            margin-top: 15px;
+            justify-content: flex-start;
+            gap: 0px;
         }
 
         .quantity-input input {
-            width: 60px;
+            width: 80px;
+            margin-top: 15px;
             height: 40px;
             text-align: center;
             border-radius: 5px;
             border: 1px solid #ccc;
             font-size: 16px;
-            margin-right: 10px;
+            box-sizing: border-box;
+        }
+
+        .quantity-input select {
+            width: 80px;
+            margin-top: 15px;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 0 10px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
         .quantity-input button {
+            height: 40px;
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -98,6 +112,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
         .quantity-input button:hover {
@@ -191,40 +206,53 @@
         }
 
         /* Styling Title */
-    .swal2-title {
-        font-size: 2rem !important; /* Ukuran font besar */
-        font-weight: bold !important;
-        color: #2c3e50 !important; /* Warna teks gelap */
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Bayangan halus */
-        margin-bottom: 10px !important;
-    }
+        .swal2-title {
+            font-size: 2rem !important;
+            /* Ukuran font besar */
+            font-weight: bold !important;
+            color: #2c3e50 !important;
+            /* Warna teks gelap */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            /* Bayangan halus */
+            margin-bottom: 10px !important;
+        }
 
-    /* Styling Content */
-    .swal2-content {
-        font-size: 1.2rem !important; /* Ukuran font konten */
-        color: #34495e !important; /* Warna teks */
-        line-height: 1.5 !important; /* Spasi lebih lebar */
-    }
+        /* Styling Content */
+        .swal2-content {
+            font-size: 1.2rem !important;
+            /* Ukuran font konten */
+            color: #34495e !important;
+            /* Warna teks */
+            line-height: 1.5 !important;
+            /* Spasi lebih lebar */
+        }
 
-    /* Styling Button */
-    .swal2-confirm {
-        background: linear-gradient(135deg, #6a11cb, #2575fc) !important; /* Gradasi ungu ke biru */
-        color: white !important; /* Teks putih */
-        font-size: 1.1rem !important; /* Ukuran font tombol */
-        font-weight: bold !important;
-        border: none !important;
-        border-radius: 50px !important; /* Tombol melingkar */
-        padding: 10px 30px !important; /* Padding lebih luas */
-        box-shadow: 0 5px 15px rgba(106, 17, 203, 0.5); /* Bayangan tombol */
-        transition: all 0.3s ease-in-out; /* Efek hover */
-    }
+        /* Styling Button */
+        .swal2-confirm {
+            background: linear-gradient(135deg, #6a11cb, #2575fc) !important;
+            /* Gradasi ungu ke biru */
+            color: white !important;
+            /* Teks putih */
+            font-size: 1.1rem !important;
+            /* Ukuran font tombol */
+            font-weight: bold !important;
+            border: none !important;
+            border-radius: 50px !important;
+            /* Tombol melingkar */
+            padding: 10px 30px !important;
+            /* Padding lebih luas */
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.5);
+            /* Bayangan tombol */
+            transition: all 0.3s ease-in-out;
+            /* Efek hover */
+        }
 
-    .swal2-confirm:hover {
-        transform: translateY(-3px) !important; /* Efek melayang */
-        box-shadow: 0 8px 20px rgba(106, 17, 203, 0.8); /* Bayangan hover */
-    }
-
-
+        .swal2-confirm:hover {
+            transform: translateY(-3px) !important;
+            /* Efek melayang */
+            box-shadow: 0 8px 20px rgba(106, 17, 203, 0.8);
+            /* Bayangan hover */
+        }
     </style>
     <div class="container product-detail">
         <div class="row">
@@ -237,7 +265,7 @@
             <div class="col-md-6">
                 <form action="{{ route('addTocart') }}" method="POST">
                     <h1 class="mb-3" style="font-size: 28px; font-weight: 600;">{{ $product->title }}</h1>
-                    <p>{{ $product->description }}</p>
+                    <p>{!! $product->description !!}</p>
                     <div class="d-flex align-items-center mb-3">
                         <span class="price">Rp
                             {{ number_format($product->price - ($product->price * $product->discount) / 100) }}</span>
@@ -250,8 +278,8 @@
 
                     <!-- Quantity Input -->
                     <div class="quantity-input d-flex align-items-center">
-                        <input type="text" min="0.1" max="{{ $product->stok }}" name="quantity" value="1"
-                            class="form-control quantity-input" style="width: 80px;" data-stock="{{ $product->stok }}">
+                        <input type="text" name="quantity" value="1" class="form-control quantity-input"
+                            style="width: 80px;" data-stock="{{ $product->stok }}">
 
                         <!-- Dropdown untuk memilih satuan -->
                         <select name="unit" class="form-select ms-2 unit-select" style="width: 80px;">
@@ -290,89 +318,69 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // SweetAlert message handling
-        @if (session('success'))
-        Swal.fire({
-            icon: "success",
-            title: "🎉 Berhasil!",
-            text: "{{ session('success') }}",
-            showConfirmButton: true,
-            confirmButtonText: "Ok",
-            customClass: {
-                popup: 'swal2-popup',
-                title: 'swal2-title',
-                content: 'swal2-content',
-                confirmButton: 'swal2-confirm'
-            },
-            timer: 2000
-        });
-    @elseif (session('error'))
-        Swal.fire({
-            icon: "error",
-            title: "⚠️ Gagal!",
-            text: "{{ session('error') }}",
-            showConfirmButton: true,
-            confirmButtonText: "Coba Lagi",
-            customClass: {
-                popup: 'swal2-popup',
-                title: 'swal2-title',
-                content: 'swal2-content',
-                confirmButton: 'swal2-confirm'
-            },
-        });
-    @endif
-        document.addEventListener('DOMContentLoaded', function() {
-            const quantityInput = document.querySelector('.quantity-input input');
-            const unitSelect = document.querySelector('.unit-select');
-            const maxStock = parseFloat(quantityInput.getAttribute('data-stock'));
+       document.addEventListener('DOMContentLoaded', function () {
+    const quantityInput = document.querySelector('.quantity-input input');
+    const unitSelect = document.querySelector('.unit-select');
+    const maxStock = parseFloat(quantityInput.getAttribute('data-stock'));
 
-            // Update max input value based on unit selection
-            unitSelect.addEventListener('change', function() {
-                if (unitSelect.value === 'gram') {
-                    quantityInput.max = maxStock * 1000; // Jika gram, max = stok * 1000
-                } else {
-                    quantityInput.max = maxStock; // Jika kg, max = stok asli
-                }
+    // Update max input value and adjust quantity when unit changes
+    unitSelect.addEventListener('change', function () {
+        if (unitSelect.value === 'gram') {
+            quantityInput.value = (parseFloat(quantityInput.value) || 0) * 1000; // Convert to grams
+        } else {
+            quantityInput.value = (parseFloat(quantityInput.value) || 0) / 1000; // Convert to kg
+        }
+        validateQuantity();
+    });
+
+    // Validate quantity input
+    quantityInput.addEventListener('input', function () {
+        // Remove invalid characters and ensure only one comma or dot
+        quantityInput.value = quantityInput.value
+            .replace(/[^0-9.,]/g, '') // Allow only numbers, commas, and dots
+            .replace(/[,\.](?=.*[,.])/g, ''); // Remove additional commas/dots after the first
+
+        // Replace comma with dot for standard decimal handling
+        quantityInput.value = quantityInput.value.replace(',', '.');
+
+        validateQuantity();
+    });
+
+    function validateQuantity() {
+        let value = parseFloat(quantityInput.value) || 0;
+        let minValue = unitSelect.value === 'gram' ? 0 : 0;
+        let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
+
+        if (value < minValue) {
+            quantityInput.value = minValue;
+        } else if (value > maxValue) {
+            quantityInput.value = maxValue;
+        }
+    }
+
+    // Form submission validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (e) {
+        let value = parseFloat(quantityInput.value) || 0;
+        let minValue = unitSelect.value === 'gram' ? 100 : 0.1;
+        let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
+
+        if (value < minValue || value > maxValue) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: '⚠️ Peringatan',
+                text: `Jumlah harus antara ${minValue} dan ${maxValue}.`,
+                confirmButtonText: 'OK',
             });
+            return;
+        }
 
-            // Validasi input agar hanya angka dan koma yang diperbolehkan
-            quantityInput.addEventListener('input', function(e) {
-                // Hapus semua karakter yang bukan angka atau koma
-                quantityInput.value = quantityInput.value.replace(/[^0-9,]/g, '');
+        if (unitSelect.value === 'gram') {
+            quantityInput.value = (value / 1000).toFixed(3);
+        }
+    });
+});
 
-                // Ganti koma menjadi titik (untuk parsing angka desimal)
-                quantityInput.value = quantityInput.value.replace(',', '.');
-
-                // Pastikan nilai minimal adalah 0.1
-                if (parseFloat(quantityInput.value) < 0.1 || isNaN(parseFloat(quantityInput.value))) {
-                    quantityInput.value = '';
-                }
-
-                // Pastikan nilai tidak melebihi stok maksimum
-                let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
-                if (parseFloat(quantityInput.value) > maxValue) {
-                    quantityInput.value = maxValue;
-                }
-            });
-
-            // Validasi akhir sebelum form dikirimkan
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                const quantity = parseFloat(quantityInput.value);
-                let maxValue = unitSelect.value === 'gram' ? maxStock * 1000 : maxStock;
-
-                // Tampilkan pesan kesalahan jika nilai tidak valid
-                if (isNaN(quantity) || quantity < 0.1 || quantity > maxValue) {
-                    e.preventDefault();
-                    alert(`Jumlah harus antara 0.1 dan ${maxValue.toFixed(3)} sesuai unit yang dipilih.`);
-                    return;
-                }
-
-                // Jika unit adalah gram, ubah ke kg sebelum dikirimkan
-                if (unitSelect.value === 'gram') {
-                    quantityInput.value = (quantity / 1000).toFixed(3); // Konversi gram ke kg
-                }
-            });
-        });
     </script>
 @endsection

@@ -117,6 +117,7 @@
 
 <nav class="navbar navbar-dark navbar-expand-lg" style="background-color: #49443a;">
     <div class="container">
+        
         <a class="navbar-brand fs-5" href="/">Jamur Tiram <br>Putra Pandawa</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,7 +138,11 @@
                 <li class="nav-item my-auto notif">
                     <a class="nav-link position-relative {{ Request::path() == 'pesanan' ? 'active' : '' }}" href="/pesanan">
                         Pesanan
-                        <span class="circle">{{ $count }}</span>
+                        @auth
+                            @if (Auth::user()->transactions()->where('status', '!=', 'Selesai')->count())
+                            <span class="circle">{{ Auth::user()->transactions()->where('status', '!=', 'Selesai')->count() }} </span>
+                            @endif 
+                        @endauth
                     </a>
                 </li>
 

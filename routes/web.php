@@ -10,7 +10,6 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\ManagementuserController;
 use App\Http\Controllers\admin\SpkController;
-use App\Http\Controllers\SAWController;
 use App\Http\Controllers\ProductController;
 
 Auth::routes();
@@ -54,15 +53,6 @@ Route::middleware([RoleMiddleware::class.':ADM,PGW'])->group(function(){
     Route::get('admin/detail-DataPenjualan/{id}', [AdminController::class, 'showDataPenjualan'])->name('admin.orders.showDetail');
     Route::get('/admin/orders/completed/pdf', [AdminController::class, 'downloadPdf'])->name('admin.orders.downloadPdf');
     Route::put('/admin/pesanan/update/{id}',[AdminController::class,'update'])->name('admin.transactions.update');
-    // Admin SAW Routes
-    // Route::get('/admin/saw', [SAWController::class, 'saw'])->name('admin.saw');  // Mengarah ke SAWController
-    // Route::post('/admin/saw', [SAWController::class, 'saw'])->name('admin.saw.process');
-    // Route::post('/calculate-ahp', [SAWController::class, 'calculateAHP'])->name('admin.calculate_ahp');
-    // Route::post('/admin/tpk/proses', [AdminController::class, 'prosesTpk'])->name('admin.tpk.proses'); // Proses input bobot dan perhitungan
-    // Route::get('/admin/tpk/hasil', [AdminController::class, 'hasilTpk'])->name('admin.tpk.hasil'); // Menampilkan hasil TPK
-    // Route::get('/admin/tpk/hasil/detail/{id}', [AdminController::class, 'detailHasilTpk'])->name('admin.tpk.hasil.detail'); // Menampilkan detail hasil TPK
-
-    // TPK Routes
     Route::get('/hasil-tpk', [SpkController::class, 'hasil'])->name('hasil.tpk.index');
     Route::get('/hasil-tpk/{datetime}', [SpkController::class, 'detail'])->name('hasil.tpk.detail');
 
@@ -87,4 +77,3 @@ Route::middleware([RoleMiddleware::class.':ADM'])->group(function(){
     Route::post('admin/tpk/process', [SPKController::class, 'process'])->name('spk.saw.process');
     Route::post('/spk/saw/store', [SpkController::class, 'sawStore'])->name('spk.saw.store');
 });
-

@@ -55,8 +55,8 @@
     <!-- Form Simpan Bobot -->
     <form action="{{ route('bobot.store') }}" method="POST">
         @csrf
-        <input type="hidden" name="quantity" value="{{ $bobotKriteria[0] }}">
-        <input type="hidden" name="price" value="{{ $bobotKriteria[1] }}">
+        <input type="hidden" name="price" value="{{ $bobotKriteria[0] }}">
+        <input type="hidden" name="quantity" value="{{ $bobotKriteria[1] }}">
         <input type="hidden" name="transactions" value="{{ $bobotKriteria[2] }}">
 
         <a href="{{ route('spk.saw.index') }}" class="btn btn-md btn-danger mx-3">Batal</a>

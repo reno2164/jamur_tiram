@@ -8,26 +8,36 @@ use App\Http\Controllers\Controller;
 
 class ManagementuserController extends Controller
 {
-    public function manageUsers()
+    public function manageUsers(Request $request)
     {
         $title = 'User Management';
         $name = 'User Management';
-        $users = User::paginate(10); // Ambil data user dengan paginasi
-        return view('admin.page.user.manage', compact('users', 'title', 'name'));
+
+        // Ambil query pencarian
+        $search = $request->input('search');
+
+        // Query pengguna dengan filter pencarian
+        $users = User::when($search, function ($query, $search) {
+            return $query->where('username', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
+        })->simplePaginate(10);
+
+        return view('admin.page.user.manage', compact('users', 'title', 'name', 'search'));
     }
 
-    public function createUser()
-{
-    $roles = [
-        'ADM' => 'Admin',
-        'USR' => 'User',
-        'PGW' => 'Pegawai',
-    ];
 
-    $title = 'Tambah User';
-    $name = 'Tambah User';
-    return view('admin.page.user.create', compact('roles', 'title', 'name'));
-}
+    public function createUser()
+    {
+        $roles = [
+            'ADM' => 'Admin',
+            'USR' => 'User',
+            'PGW' => 'Pegawai',
+        ];
+
+        $title = 'Tambah User';
+        $name = 'Tambah User';
+        return view('admin.page.user.create', compact('roles', 'title', 'name'));
+    }
 
     public function storeUser(Request $request)
     {
@@ -60,28 +70,28 @@ class ManagementuserController extends Controller
         $name = 'Edit User';
         return view('admin.page.user.edit', compact('user', 'roles', 'title', 'name'));
     }
-    
 
 
-public function updateUser(Request $request, $id)
-{
-    $user = User::findOrFail($id);
 
-    $request->validate([
-        'username' => 'required|string|max:255|unique:users,username,' . $id,
-        'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-        'role' => 'required|string|in:ADM,USR,PGW',
-    ]);
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
 
-    $user->update([
-        'username' => $request->username,
-        'email' => $request->email,
-        'password' => $request->password ? bcrypt($request->password) : $user->password,
-        'role' => $request->role,
-    ]);
+        $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'role' => 'required|string|in:ADM,USR,PGW',
+        ]);
 
-    return redirect()->route('manage.users')->with('success', 'User berhasil diperbarui.');
-}
+        $user->update([
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => $request->password ? bcrypt($request->password) : $user->password,
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('manage.users')->with('success', 'User berhasil diperbarui.');
+    }
 
 
     public function deleteUser($id)

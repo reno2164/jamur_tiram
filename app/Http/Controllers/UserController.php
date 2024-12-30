@@ -167,6 +167,7 @@ class UserController extends Controller
         // Tampilkan halaman riwayat transaksi
         return view('user.riwayat', compact('transactions', 'title', 'count'));
     }
+
     public function pesanan()
     {
         $title = 'Pesanan';

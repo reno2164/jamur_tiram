@@ -10,9 +10,9 @@
                 <tr>
                     <th>Kode</th>
                     <th>Nama</th>
-                    <th>Berat</th>
-                    <th>Harga</th>
-                    <th>Transaksi</th>
+                    <th>Total Berat</th>
+                    <th>Total Harga</th>
+                    <th>Banyak Pembelian</th>
                 </tr>
             </thead>
             <tbody>

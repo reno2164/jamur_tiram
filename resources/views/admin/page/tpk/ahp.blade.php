@@ -20,7 +20,7 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>Kriteria/Alternatif A sama penting dengan kriteria/alternatif B</td>
+                            <td>Kedua elemen sama pentingnya</td>
                         </tr>
                         <tr>
                             <td>3</td>
@@ -28,11 +28,11 @@
                         </tr>
                         <tr>
                             <td>5</td>
-                            <td>A jelas lebih penting dari B</td>
+                            <td>A lebih penting dari B</td>
                         </tr>
                         <tr>
                             <td>7</td>
-                            <td>A sangat jelas lebih penting dari B</td>
+                            <td>A jelas lebih penting dari B</td>
                         </tr>
                         <tr>
                             <td>9</td>

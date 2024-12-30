@@ -13,9 +13,9 @@ class SpkController extends Controller
     public function index()
     {
         // Default kriteria
-        $kriteria = ['Jumlah Beli', 'Jumlah Harga', 'Jumlah Berat'];
-        $name = 'Tpk';
-        $title = 'Tpk';
+        $kriteria = ['Jumlah Harga', 'Jumlah Berat', 'Jumlah beli'];
+        $name = 'TPK';
+        $title = 'TPK';
 
         // Tampilkan halaman input
         return view('admin.page.tpk.ahp', compact('kriteria', 'name', 'title'));
@@ -27,7 +27,7 @@ class SpkController extends Controller
             'matriks.*.*' => 'required|numeric|min:0',
         ]);
 
-        $kriteria = ['Jumlah Beli', 'Jumlah Harga', 'Jumlah Berat'];
+        $kriteria = ['Jumlah Harga', 'Jumlah Berat', 'Jumlah Beli'];
 
         // Ambil matriks dari input
         $matriks = $request->input('matriks');

@@ -4,13 +4,20 @@
     <div class="card rounded-full">
         <div class="card-header bg-transparent d-flex justify-content-between">
             @if (Auth::user()->role == 'ADM')
-            <a href="{{ route('create.users') }}" class="btn btn-info">
-                <i class="fa-solid fa-plus"></i> Tambah User
-            </a>
+                <a href="{{ route('create.users') }}" class="btn btn-info">
+                    <i class="fa-solid fa-plus"></i> Tambah User
+                </a>
             @else
                 <div></div>
             @endif
-            <input type="text" wire:model="search" class="form-control w-25" placeholder="Search....">
+            <form action="{{ route('manage.users') }}" method="GET">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Cari username atau email..."
+                        value="{{ request('search') }}">
+                    <button class="btn btn-primary" type="submit">Cari</button>
+                </div>
+            </form>
+
         </div>
         <div class="card-body">
             <table class="table table-bordered">
@@ -21,29 +28,30 @@
                         <th>Email</th>
                         <th>Role</th>
                         @if (Auth::user()->role == 'ADM')
-                        <th>Aksi</th>
+                            <th>Aksi</th>
                         @endif
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($users as $user)
+                    @foreach ($users as $index => $user)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <!-- Nomor Berurutan -->
+                            <td>{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                             <td>{{ $user->username }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->role }}</td>
                             @if (Auth::user()->role == 'ADM')
-                            <td>
-                                <a href="" class="btn btn-sm btn-dark"><i class="fa-solid fa-eye"></i></a>
-                                <a href="{{ route('edit.users', $user->id) }}" class="btn btn-sm btn-warning"><i
-                                        class="fa fa-pencil"></i></a>
+                                <td>
+                                    <a href="" class="btn btn-sm btn-dark"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('edit.users', $user->id) }}" class="btn btn-sm btn-warning"><i
+                                            class="fa fa-pencil"></i></a>
 
-                                <!-- Tombol Hapus -->
-                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#delete{{ $user->id }}">
-                                    <i class="fa fa-trash"></i>
-
-                            </td>
+                                    <!-- Tombol Hapus -->
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#delete{{ $user->id }}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
                             @endif
                         </tr>
                         <!-- Modal Konfirmasi Hapus -->
